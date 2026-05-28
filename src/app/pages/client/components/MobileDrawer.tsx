@@ -167,17 +167,36 @@ export function MobileDrawer({
         </div>
 
         <nav className="mt-6 space-y-1">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={onClose}
-              className="flex items-center gap-4 rounded-2xl px-4 py-3 text-base font-extrabold text-gray-700 hover:bg-gray-100"
-            >
-              <item.icon className="size-6" />
-              {text(item.label)}
-            </a>
-          ))}
+          {navItems.map((item) => {
+            const className =
+              "flex items-center gap-4 rounded-2xl px-4 py-3 text-base font-extrabold text-gray-700 hover:bg-gray-100";
+            const content = (
+              <>
+                <item.icon className="size-6" />
+                {text(item.label)}
+              </>
+            );
+
+            return item.href.startsWith("#") ? (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={onClose}
+                className={className}
+              >
+                {content}
+              </a>
+            ) : (
+              <Link
+                key={item.label}
+                to={item.href}
+                onClick={onClose}
+                className={className}
+              >
+                {content}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="mt-6 border-t border-gray-100 pt-5">

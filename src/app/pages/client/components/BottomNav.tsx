@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 import type { ClientNavItem } from "../content";
 import { useClientI18n } from "../i18n";
 
@@ -17,22 +19,31 @@ export function BottomNav({
       }`}
     >
       <div className="mx-auto grid max-w-md grid-cols-5">
-        {navItems.map((item, index) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className={`flex min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[0.68rem] font-bold min-[390px]:text-[0.72rem] ${
+        {navItems.map((item, index) => {
+          const className = `flex min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[0.68rem] font-bold min-[390px]:text-[0.72rem] ${
               index === 0 ? "text-rose-600" : "text-gray-500"
-            }`}
-          >
-            <item.icon
-              className={`size-6 min-[390px]:size-7 ${
-                index === 0 ? "stroke-[2.4]" : ""
-              }`}
-            />
-            <span className="truncate">{text(item.label)}</span>
-          </a>
-        ))}
+            }`;
+          const content = (
+            <>
+              <item.icon
+                className={`size-6 min-[390px]:size-7 ${
+                  index === 0 ? "stroke-[2.4]" : ""
+                }`}
+              />
+              <span className="truncate">{text(item.label)}</span>
+            </>
+          );
+
+          return item.href.startsWith("#") ? (
+            <a key={item.label} href={item.href} className={className}>
+              {content}
+            </a>
+          ) : (
+            <Link key={item.label} to={item.href} className={className}>
+              {content}
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
