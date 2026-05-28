@@ -161,7 +161,7 @@ export const TransportPickupBadge = memo(function TransportPickupBadge({
               >
                 <MapPinIcon className="mt-0.5 size-3.5 shrink-0 text-gray-400" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[0.7rem] font-extrabold leading-tight">
+                  <p className="block max-w-full overflow-x-auto whitespace-nowrap text-[0.7rem] font-extrabold leading-tight">
                     {stop.place}
                   </p>
                   <p className="text-[0.62rem] font-bold leading-tight text-gray-500">
