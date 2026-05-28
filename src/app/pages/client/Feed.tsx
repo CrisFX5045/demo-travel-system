@@ -6,15 +6,16 @@ import { useFeedWindow } from "./feed/hooks/useFeedWindow";
 
 export default function ClientFeed() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialExperienceId = searchParams.get("experience");
+  const selectedProvince = searchParams.get("province") ?? "";
   const { liked, saved, toggleLiked, toggleSaved } = useFeedReactions();
   const {
     feedItems,
     isLoadingMore,
     trimmedBefore,
     handleActiveIndexChange,
-  } = useFeedWindow(initialExperienceId);
+  } = useFeedWindow(initialExperienceId, selectedProvince);
 
   const leaveFeed = () => {
     navigate("/client");
@@ -26,7 +27,22 @@ export default function ClientFeed() {
       className="h-svh w-full max-w-[100svw] overflow-hidden bg-black text-white [animation:client-feed-page-in_360ms_cubic-bezier(.22,1,.36,1)_both] lg:bg-[#111]"
     >
       <FeedTransitionStyles />
-      <FeedHeader onBack={leaveFeed} />
+      <FeedHeader
+        selectedProvince={selectedProvince}
+        onBack={leaveFeed}
+        onSelectProvince={(province) => {
+          const nextParams = new URLSearchParams(searchParams);
+
+          if (province) {
+            nextParams.set("province", province);
+            nextParams.delete("experience");
+          } else {
+            nextParams.delete("province");
+          }
+
+          setSearchParams(nextParams, { replace: true });
+        }}
+      />
       <FeedViewport
         experiences={feedItems}
         isLoadingMore={isLoadingMore}

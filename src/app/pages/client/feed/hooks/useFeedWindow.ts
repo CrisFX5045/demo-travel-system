@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { experiences } from "@/app/data/tourism";
 import type { Experience } from "@/app/data/tourism";
@@ -13,18 +13,21 @@ type FeedPage = {
   nextCursor: number | null;
 };
 
-function fetchFeedPage(cursor: number): FeedPage {
-  const items = experiences.slice(cursor, cursor + PAGE_SIZE);
+function fetchFeedPage(source: Experience[], cursor: number): FeedPage {
+  const items = source.slice(cursor, cursor + PAGE_SIZE);
   const nextCursor =
-    cursor + PAGE_SIZE < experiences.length ? cursor + PAGE_SIZE : null;
+    cursor + PAGE_SIZE < source.length ? cursor + PAGE_SIZE : null;
 
   return { items, nextCursor };
 }
 
-function getInitialCursor(initialExperienceId?: string | null) {
+function getInitialCursor(
+  source: Experience[],
+  initialExperienceId?: string | null,
+) {
   if (!initialExperienceId) return 0;
 
-  const experienceIndex = experiences.findIndex(
+  const experienceIndex = source.findIndex(
     (experience) => experience.id === initialExperienceId,
   );
 
@@ -33,14 +36,37 @@ function getInitialCursor(initialExperienceId?: string | null) {
   return Math.floor(experienceIndex / PAGE_SIZE) * PAGE_SIZE;
 }
 
-export function useFeedWindow(initialExperienceId?: string | null) {
-  const initialCursor = getInitialCursor(initialExperienceId);
-  const initialFeedPage = fetchFeedPage(initialCursor);
+export function useFeedWindow(
+  initialExperienceId?: string | null,
+  selectedProvince = "",
+) {
+  const feedSource = useMemo(
+    () =>
+      selectedProvince
+        ? experiences.filter(
+            (experience) => experience.province === selectedProvince,
+          )
+        : experiences,
+    [selectedProvince],
+  );
+  const initialCursor = getInitialCursor(feedSource, initialExperienceId);
+  const initialFeedPage = fetchFeedPage(feedSource, initialCursor);
   const [feedItems, setFeedItems] = useState(initialFeedPage.items);
   const [nextCursor, setNextCursor] = useState(initialFeedPage.nextCursor);
   const [trimmedBefore, setTrimmedBefore] = useState(initialCursor);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const isLoadingRef = useRef(false);
+
+  useEffect(() => {
+    const resetCursor = getInitialCursor(feedSource, initialExperienceId);
+    const resetPage = fetchFeedPage(feedSource, resetCursor);
+
+    setFeedItems(resetPage.items);
+    setNextCursor(resetPage.nextCursor);
+    setTrimmedBefore(resetCursor);
+    setIsLoadingMore(false);
+    isLoadingRef.current = false;
+  }, [feedSource, initialExperienceId]);
 
   const loadNextPage = useCallback(() => {
     if (isLoadingRef.current || nextCursor === null) return;
@@ -48,7 +74,7 @@ export function useFeedWindow(initialExperienceId?: string | null) {
     isLoadingRef.current = true;
     setIsLoadingMore(true);
 
-    const page = fetchFeedPage(nextCursor);
+    const page = fetchFeedPage(feedSource, nextCursor);
     const shouldTrim =
       feedItems.length + page.items.length > MAX_ITEMS_IN_MEMORY;
 
@@ -63,7 +89,7 @@ export function useFeedWindow(initialExperienceId?: string | null) {
     setNextCursor(page.nextCursor);
     setIsLoadingMore(false);
     isLoadingRef.current = false;
-  }, [feedItems.length, nextCursor]);
+  }, [feedItems.length, feedSource, nextCursor]);
 
   const handleActiveIndexChange = useCallback(
     (activeIndex: number) => {

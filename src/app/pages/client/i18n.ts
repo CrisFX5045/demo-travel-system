@@ -145,6 +145,12 @@ const clientTranslations = {
     allToursHint:
       "Revisa las experiencias disponibles de esta empresa y elige la que mejor calza con tu viaje.",
     back: "Volver",
+    transportIncluded: "Transporte incluido",
+    pickupPoints: "Puntos de recogida",
+    pickupPointsHint:
+      "Estas son las paradas disponibles para iniciar el tour.",
+    closeTransport: "Cerrar transporte",
+    viewTransportStops: "Ver puntos de recogida",
   },
   en: {
     explore: "Explore",
@@ -265,6 +271,12 @@ const clientTranslations = {
     allToursHint:
       "Review this company's available experiences and choose the best fit for your trip.",
     back: "Back",
+    transportIncluded: "Transportation included",
+    pickupPoints: "Pickup points",
+    pickupPointsHint:
+      "These are the available stops to start the tour.",
+    closeTransport: "Close transportation",
+    viewTransportStops: "View pickup points",
   },
 } as const;
 

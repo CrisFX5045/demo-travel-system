@@ -80,6 +80,16 @@ export function FeedViewport({
           onToggleSaved={() => onToggleSaved(experience.id)}
         />
       ))}
+      {!experiences.length && !isLoadingMore && (
+        <div className="grid h-svh snap-start place-items-center bg-gray-950 px-8 text-center text-white">
+          <div>
+            <p className="text-lg font-extrabold">{t("noResults")}</p>
+            <p className="mt-2 text-sm font-bold text-white/60">
+              {t("noResultsHint")}
+            </p>
+          </div>
+        </div>
+      )}
       {isLoadingMore && (
         <div className="grid h-svh snap-start place-items-center bg-gray-50 text-sm font-bold text-gray-500">
           {t("loadingExperiences")}

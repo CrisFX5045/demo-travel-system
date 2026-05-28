@@ -6,6 +6,7 @@ import {
   StarIcon,
 } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
+import { FaBusAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 
 import { experiences } from "@/app/data/tourism";
@@ -42,6 +43,7 @@ export default function ClientExperienceDetail() {
   const isLiked = experience ? Boolean(liked[experience.id]) : false;
   const isSaved = experience ? Boolean(saved[experience.id]) : false;
   const promotion = experience?.promotion;
+  const pickupStops = experience?.transport?.pickupStops;
   const promotionPrice = experience ? getPromotionPrice(experience) : null;
 
   const leaveExperience = () => {
@@ -176,6 +178,38 @@ export default function ClientExperienceDetail() {
                 </p>
               </div>
             )}
+            {pickupStops?.length ? (
+              <div className="mt-4 border-t border-gray-100 pt-4 text-gray-950">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-950 px-3 py-1 text-xs font-extrabold text-white">
+                    <FaBusAlt className="size-4" />
+                    {t("transportIncluded")}
+                  </span>
+                  <p className="text-sm font-extrabold">{t("pickupPoints")}</p>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  {t("pickupPointsHint")}
+                </p>
+                <div className="mt-3 max-h-52 overflow-y-auto rounded-2xl bg-gray-50 p-2 [scrollbar-width:thin]">
+                  {pickupStops.map((stop) => (
+                    <div
+                      key={`${stop.place}-${stop.time}`}
+                      className="flex items-start gap-3 rounded-xl px-2 py-2"
+                    >
+                      <MapPinIcon className="mt-0.5 size-5 shrink-0 text-gray-400" />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-extrabold text-gray-950">
+                          {stop.place}
+                        </p>
+                        <p className="text-sm font-bold text-gray-500">
+                          {stop.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3">

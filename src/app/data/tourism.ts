@@ -27,6 +27,12 @@ export type Experience = {
     description: string;
     discountPercent?: number;
   };
+  transport?: {
+    pickupStops: Array<{
+      place: string;
+      time: string;
+    }>;
+  };
 };
 
 export type Lead = {
@@ -76,6 +82,14 @@ export const experiences: Experience[] = [
     favorites: 316,
     nextSlot: "Viernes 8:00 AM",
     promoted: true,
+    transport: {
+      pickupStops: [
+        { place: "Catedral de San Jose", time: "5:00 AM" },
+        { place: "Heredia Centro", time: "5:45 AM" },
+        { place: "Cruce de Rio Frio", time: "6:40 AM" },
+        { place: "Siquirres Centro", time: "7:15 AM" },
+      ],
+    },
     promotion: {
       badge: "2x1",
       title: "Dos por uno",

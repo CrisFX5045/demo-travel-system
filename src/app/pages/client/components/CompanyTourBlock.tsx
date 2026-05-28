@@ -13,6 +13,7 @@ import { useClientI18n } from "../i18n";
 import { formatExperiencePriceLine } from "../price";
 import { getExperiencePath } from "../routes";
 import { LikeToggleButton } from "./LikeToggleButton";
+import { TransportPickupBadge } from "./TransportPickupBadge";
 
 export function CompanyTourBlock({
   group,
@@ -104,22 +105,28 @@ function CompanyExperienceCard({
           : "w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none"
       }
     >
-      <Link
-        to={getExperiencePath(experience.id)}
-        state={{ from: returnTo }}
-        className="relative block overflow-hidden rounded-2xl bg-gray-100"
-      >
-        <img
-          src={experience.image}
-          alt=""
-          className="aspect-[1.04] w-full object-cover"
-        />
+      <div className="relative rounded-2xl bg-gray-100">
+        <Link
+          to={getExperiencePath(experience.id)}
+          state={{ from: returnTo }}
+          className="block overflow-hidden rounded-2xl"
+        >
+          <img
+            src={experience.image}
+            alt=""
+            className="aspect-[1.04] w-full object-cover"
+          />
+        </Link>
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
           className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950"
         />
-      </Link>
+        <TransportPickupBadge
+          pickupStops={experience.transport?.pickupStops}
+          className="bottom-2.5 right-2.5"
+        />
+      </div>
       <Link
         to={getExperiencePath(experience.id)}
         state={{ from: returnTo }}

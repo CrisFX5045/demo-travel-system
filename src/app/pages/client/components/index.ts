@@ -13,3 +13,4 @@ export { MobileDrawer } from "./MobileDrawer";
 export { PromotionsSection } from "./PromotionsSection";
 export { SectionHeader } from "./SectionHeader";
 export { TourCard } from "./TourCard";
+export { TransportPickupBadge } from "./TransportPickupBadge";

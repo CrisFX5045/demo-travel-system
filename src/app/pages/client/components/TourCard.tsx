@@ -1,10 +1,13 @@
 import { StarIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router";
 
+import { experiences } from "@/app/data/tourism";
+
 import type { PopularTour } from "../content";
 import { useClientI18n } from "../i18n";
 import { getExperiencePath } from "../routes";
 import { LikeToggleButton } from "./LikeToggleButton";
+import { TransportPickupBadge } from "./TransportPickupBadge";
 
 export function TourCard({
   tour,
@@ -16,29 +19,36 @@ export function TourCard({
   onToggleLiked: () => void;
 }) {
   const { t, language } = useClientI18n();
+  const experience = experiences.find((item) => item.id === tour.id);
 
   return (
     <article className="w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none">
-      <Link
-        to={getExperiencePath(tour.id)}
-        state={{ from: "/client" }}
-        className="relative block overflow-hidden rounded-[1.15rem] bg-gray-100 md:rounded-[1.35rem]"
-      >
-        <img
-          src={tour.image}
-          alt=""
-          className="aspect-[1.04] w-full object-cover"
-        />
-        <div className="absolute left-2.5 top-2.5 max-w-[72%] rounded-2xl bg-white/90 px-2.5 py-1.5 text-xs font-extrabold leading-tight shadow-sm md:left-3 md:top-3 md:px-3 md:py-2 md:text-sm">
-          {t("favoriteAmongTravelers")}
-        </div>
+      <div className="relative rounded-[1.15rem] bg-gray-100 md:rounded-[1.35rem]">
+        <Link
+          to={getExperiencePath(tour.id)}
+          state={{ from: "/client" }}
+          className="block overflow-hidden rounded-[1.15rem] md:rounded-[1.35rem]"
+        >
+          <img
+            src={tour.image}
+            alt=""
+            className="aspect-[1.04] w-full object-cover"
+          />
+          <div className="absolute left-2.5 top-2.5 max-w-[72%] rounded-2xl bg-white/90 px-2.5 py-1.5 text-xs font-extrabold leading-tight shadow-sm md:left-3 md:top-3 md:px-3 md:py-2 md:text-sm">
+            {t("favoriteAmongTravelers")}
+          </div>
+        </Link>
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
           className="absolute right-2.5 top-2.5 bg-black/25 text-white backdrop-blur md:right-3 md:top-3 md:size-10"
           iconClassName={`md:size-7 ${isLiked ? "text-rose-500" : ""}`}
         />
-      </Link>
+        <TransportPickupBadge
+          pickupStops={experience?.transport?.pickupStops}
+          className="bottom-2.5 right-2.5 md:bottom-3 md:right-3"
+        />
+      </div>
       <Link
         to={getExperiencePath(tour.id)}
         state={{ from: "/client" }}

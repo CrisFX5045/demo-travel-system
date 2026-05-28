@@ -13,6 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
 import { type ElementType, type FormEvent, useState } from "react";
+import { FaBusAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 
 import { useClientI18n } from "./i18n";
@@ -41,6 +42,8 @@ export default function ClientProfileBookingDetail() {
   const [comment, setComment] = useState("");
   const [isReviewSubmitted, setIsReviewSubmitted] = useState(false);
   const visibleRating = hoverRating || rating;
+  const promotion = experience?.promotion;
+  const pickupStops = experience?.transport?.pickupStops;
 
   const handleReviewSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -144,6 +147,44 @@ export default function ClientProfileBookingDetail() {
                 title={t("booking")}
                 value={copy.cancellationPolicy}
               />
+              {promotion ? (
+                <ImportantRow
+                  icon={TicketIcon}
+                  title={promotion.title}
+                  value={promotion.description}
+                  badge={promotion.badge}
+                />
+              ) : null}
+              {pickupStops?.length ? (
+                <div className="flex gap-3 rounded-3xl bg-gray-50 p-4">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-white">
+                    <FaBusAlt className="size-4.5 text-gray-700" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-extrabold">
+                      {t("transportIncluded")}
+                    </span>
+                    <span className="mt-1 block text-sm leading-6 text-gray-500">
+                      {t("pickupPointsHint")}
+                    </span>
+                    <span className="mt-3 block max-h-40 overflow-y-auto rounded-2xl bg-white px-3 py-1 [scrollbar-width:thin]">
+                      {pickupStops.map((stop) => (
+                        <span
+                          key={`${stop.place}-${stop.time}`}
+                          className="flex items-center justify-between gap-3 border-b border-gray-100 py-2 last:border-b-0"
+                        >
+                          <span className="min-w-0 truncate text-sm font-bold text-gray-700">
+                            {stop.place}
+                          </span>
+                          <span className="shrink-0 text-xs font-extrabold text-gray-950">
+                            {stop.time}
+                          </span>
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+                </div>
+              ) : null}
             </div>
           </section>
         </section>
@@ -250,10 +291,12 @@ function ImportantRow({
   icon: Icon,
   title,
   value,
+  badge,
 }: {
   icon: ElementType;
   title: string;
   value: string;
+  badge?: string;
 }) {
   return (
     <div className="flex gap-3 rounded-3xl bg-gray-50 p-4">
@@ -261,7 +304,14 @@ function ImportantRow({
         <Icon className="size-5 text-gray-700" />
       </span>
       <span className="min-w-0">
-        <span className="block text-sm font-extrabold">{title}</span>
+        <span className="flex flex-wrap items-center gap-2 text-sm font-extrabold">
+          <span>{title}</span>
+          {badge ? (
+            <span className="rounded-full bg-red-600 px-2 py-0.5 text-[0.65rem] font-black text-white">
+              {badge}
+            </span>
+          ) : null}
+        </span>
         <span className="mt-1 block text-sm leading-6 text-gray-500">
           {value}
         </span>

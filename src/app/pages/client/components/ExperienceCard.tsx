@@ -6,6 +6,7 @@ import { useClientI18n } from "../i18n";
 import { formatExperiencePriceLine } from "../price";
 import { getExperiencePath } from "../routes";
 import { LikeToggleButton } from "./LikeToggleButton";
+import { TransportPickupBadge } from "./TransportPickupBadge";
 
 export function ExperienceCard({
   experience,
@@ -30,28 +31,34 @@ export function ExperienceCard({
           : "w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none"
       }
     >
-      <Link
-        to={getExperiencePath(experience.id)}
-        state={{ from: returnTo }}
-        className="relative block overflow-hidden rounded-[1.15rem] bg-gray-100 md:rounded-[1.35rem]"
-      >
-        <img
-          src={experience.image}
-          alt=""
-          className="aspect-[1.04] w-full object-cover"
-        />
-        {experience.promoted && (
-          <div className="absolute left-2.5 top-2.5 rounded-lg bg-red-600 px-2 py-1 text-[0.68rem] font-extrabold text-white md:left-3 md:top-3 md:text-xs">
-            {language === "es" ? "Ahorros exclusivos" : "Exclusive savings"}
-          </div>
-        )}
+      <div className="relative rounded-[1.15rem] bg-gray-100 md:rounded-[1.35rem]">
+        <Link
+          to={getExperiencePath(experience.id)}
+          state={{ from: returnTo }}
+          className="block overflow-hidden rounded-[1.15rem] md:rounded-[1.35rem]"
+        >
+          <img
+            src={experience.image}
+            alt=""
+            className="aspect-[1.04] w-full object-cover"
+          />
+          {experience.promoted && (
+            <div className="absolute left-2.5 top-2.5 rounded-lg bg-red-600 px-2 py-1 text-[0.68rem] font-extrabold text-white md:left-3 md:top-3 md:text-xs">
+              {language === "es" ? "Ahorros exclusivos" : "Exclusive savings"}
+            </div>
+          )}
+        </Link>
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
           className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950 md:right-3 md:top-3 md:size-10"
           iconClassName="md:size-7"
         />
-      </Link>
+        <TransportPickupBadge
+          pickupStops={experience.transport?.pickupStops}
+          className="bottom-2.5 right-2.5 md:bottom-3 md:right-3"
+        />
+      </div>
       <div className="mt-2.5 md:mt-3">
         <Link
           to={getExperiencePath(experience.id)}
