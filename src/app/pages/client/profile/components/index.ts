@@ -4,6 +4,7 @@ export { ProfileActionList } from "./ProfileActionList";
 export { ProfileHeader } from "./ProfileHeader";
 export { ProfileSection } from "./ProfileSection";
 export { ProfileExperienceList } from "./ProfileExperienceList";
+export { ProfileSettingsPanel } from "./ProfileSettingsPanel";
 export { ProfileSignInPrompt } from "./ProfileSignInPrompt";
 export { ProfileSimpleHeader } from "./ProfileSimpleHeader";
 export { ProfileStats } from "./ProfileStats";

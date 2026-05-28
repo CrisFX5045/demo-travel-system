@@ -52,6 +52,12 @@ export function TravelerSummary({
           <div className="h-2 rounded-full bg-white/15">
             <div className="h-full w-[82%] rounded-full bg-white" />
           </div>
+          <button
+            type="button"
+            className="mt-3 rounded-full bg-white/12 px-4 py-2 text-xs font-extrabold text-white transition hover:bg-white/18 active:scale-[0.98]"
+          >
+            {copy.completeProfile}
+          </button>
         </div>
       </div>
     </section>

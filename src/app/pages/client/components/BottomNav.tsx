@@ -21,7 +21,7 @@ export function BottomNav({
       <div className="mx-auto grid max-w-md grid-cols-5">
         {navItems.map((item, index) => {
           const className = `flex min-w-0 flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[0.68rem] font-bold min-[390px]:text-[0.72rem] ${
-              index === 0 ? "text-rose-600" : "text-gray-500"
+              index === 0 ? "text-green-500" : "text-gray-500"
             }`;
           const content = (
             <>

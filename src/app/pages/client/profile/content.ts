@@ -20,6 +20,7 @@ export type ProfileCopy = {
   verified: string;
   memberSince: string;
   profileCompletion: string;
+  completeProfile: string;
   verifyIdentity: string;
   nextTrips: string;
   nextTripsHint: string;
@@ -29,6 +30,15 @@ export type ProfileCopy = {
   preferencesHint: string;
   account: string;
   support: string;
+  settings: string;
+  darkMode: string;
+  darkModeHint: string;
+  travelAlerts: string;
+  travelAlertsHint: string;
+  saveSearches: string;
+  saveSearchesHint: string;
+  locationRecommendations: string;
+  locationRecommendationsHint: string;
   viewAll: string;
   manage: string;
   requestChanges: string;
@@ -79,6 +89,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     verified: "Viajero verificado",
     memberSince: "Miembro desde 2026",
     profileCompletion: "Perfil al",
+    completeProfile: "Completar perfil",
     verifyIdentity: "Verificar identidad",
     nextTrips: "Próximas reservas",
     nextTripsHint: "Tus tours confirmados y solicitudes recientes.",
@@ -88,6 +99,15 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     preferencesHint: "Usaremos esto para recomendar mejores tours.",
     account: "Cuenta y seguridad",
     support: "Ayuda y soporte",
+    settings: "Configuración",
+    darkMode: "Modo oscuro",
+    darkModeHint: "Cambia la apariencia de la app para usarla con menos brillo.",
+    travelAlerts: "Alertas de viaje",
+    travelAlertsHint: "Recibe recordatorios de reservas, cambios y mensajes.",
+    saveSearches: "Guardar búsquedas",
+    saveSearchesHint: "Mantén tus filtros recientes para explorar más rápido.",
+    locationRecommendations: "Recomendaciones por ubicación",
+    locationRecommendationsHint: "Usa tu zona aproximada para sugerir tours cercanos.",
     viewAll: "Ver todo",
     manage: "Gestionar",
     requestChanges: "Solicitar cambios",
@@ -123,6 +143,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     verified: "Verified traveler",
     memberSince: "Member since 2026",
     profileCompletion: "Profile at",
+    completeProfile: "Complete profile",
     verifyIdentity: "Verify identity",
     nextTrips: "Upcoming bookings",
     nextTripsHint: "Your confirmed tours and recent requests.",
@@ -132,6 +153,15 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     preferencesHint: "We will use this to recommend better tours.",
     account: "Account and security",
     support: "Help and support",
+    settings: "Settings",
+    darkMode: "Dark mode",
+    darkModeHint: "Switch the app appearance for a lower-brightness experience.",
+    travelAlerts: "Travel alerts",
+    travelAlertsHint: "Get booking reminders, updates and company messages.",
+    saveSearches: "Save searches",
+    saveSearchesHint: "Keep recent filters so exploring is faster.",
+    locationRecommendations: "Location recommendations",
+    locationRecommendationsHint: "Use your approximate area to suggest nearby tours.",
     viewAll: "View all",
     manage: "Manage",
     requestChanges: "Request changes",

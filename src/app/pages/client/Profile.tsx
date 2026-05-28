@@ -10,6 +10,7 @@ import {
   ProfileActionList,
   ProfileHeader,
   ProfileSection,
+  ProfileSettingsPanel,
   ProfileStats,
   TravelerSummary,
 } from "./profile/components";
@@ -113,6 +114,10 @@ export default function ClientProfile() {
               actions={supportActions[language]}
               openLabel={copy.open}
             />
+          </ProfileSection>
+
+          <ProfileSection title={copy.settings}>
+            <ProfileSettingsPanel copy={copy} />
           </ProfileSection>
         </aside>
       </div>

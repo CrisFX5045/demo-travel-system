@@ -53,7 +53,7 @@ export function CategoryTabs({
                 {text(tab.label)}
               </span>
               <span
-                className={`absolute inset-x-2 -bottom-px h-1 origin-center rounded-full bg-gray-950 transition-transform duration-300 ease-out md:inset-x-0 ${
+                className={`absolute inset-x-2 -bottom-px h-1 origin-center rounded-full bg-gray-950 transition-transform duration-300 ease-out dark:bg-green-500 md:inset-x-0 ${
                   isActive ? "scale-x-100" : "scale-x-0"
                 }`}
               />
