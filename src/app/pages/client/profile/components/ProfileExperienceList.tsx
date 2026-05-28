@@ -22,7 +22,7 @@ export function ProfileExperienceList({
         const href =
           mode === "booking"
             ? `/client/profile/bookings/${experience.id}`
-            : `/client/experiences/${experience.id}`;
+            : `/client/profile/bookings/${experience.id}`;
 
         return (
           <Link

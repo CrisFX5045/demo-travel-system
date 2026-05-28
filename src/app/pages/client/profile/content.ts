@@ -46,7 +46,7 @@ export type ProfileCopy = {
   toursHistoryHint: string;
   reviewsTitle: string;
   reviewsHint: string;
-  writeReview: string;
+  ViewDetails: string;
   completed: string;
   tourDate: string;
   ratingLabel: string;
@@ -105,7 +105,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     toursHistoryHint: "Tus reservas pasadas y tours completados.",
     reviewsTitle: "Reseñas",
     reviewsHint: "Comparte tu experiencia y ayuda a otros viajeros.",
-    writeReview: "Escribir reseña",
+    ViewDetails: "Ver detalles",
     completed: "Finalizado",
     tourDate: "Fecha",
     ratingLabel: "Tu calificación",
@@ -122,7 +122,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     eyebrow: "Your traveler account",
     verified: "Verified traveler",
     memberSince: "Member since 2026",
-    profileCompletion: "Profile 82%",
+    profileCompletion: "Profile at",
     verifyIdentity: "Verify identity",
     nextTrips: "Upcoming bookings",
     nextTripsHint: "Your confirmed tours and recent requests.",
@@ -149,7 +149,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     toursHistoryHint: "Your past bookings and completed tours.",
     reviewsTitle: "Reviews",
     reviewsHint: "Share your experience and help other travelers.",
-    writeReview: "Write review",
+    ViewDetails: "View details",
     completed: "Finished",
     tourDate: "Date",
     ratingLabel: "Your rating",

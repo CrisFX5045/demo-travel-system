@@ -11,7 +11,6 @@ import {
   ProfileHeader,
   ProfileSection,
   ProfileStats,
-  TourHistoryReviewCard,
   TravelerSummary,
 } from "./profile/components";
 import {
@@ -88,12 +87,12 @@ export default function ClientProfile() {
             actionLabel={copy.viewAll}
             actionHref="/client/profile/tours"
           >
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3">
               {pastTrips.map((experience) => (
-                <TourHistoryReviewCard
+                <BookingPreviewCard
                   key={experience.id}
                   experience={experience}
-                  copy={copy}
+                  actionLabel={copy.completed}
                   returnTo="/client/profile"
                 />
               ))}

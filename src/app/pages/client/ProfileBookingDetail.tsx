@@ -7,10 +7,12 @@ import {
   MapPinIcon,
   PhoneIcon,
   ShieldCheckIcon,
+  StarIcon,
   TicketIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
-import type { ElementType } from "react";
+import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
+import { type ElementType, type FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 
 import { useClientI18n } from "./i18n";
@@ -18,6 +20,7 @@ import { formatExperiencePrice } from "./price";
 import {
   getBookingCode,
   getProfileBookingById,
+  pastTourIds,
 } from "./profile/bookings";
 import { profileCopy } from "./profile/content";
 import { getReturnPath } from "./experience-detail/utils";
@@ -30,6 +33,19 @@ export default function ClientProfileBookingDetail() {
   const copy = profileCopy[language];
   const experience = getProfileBookingById(id);
   const returnTo = getReturnPath(location.state) || "/client/profile/bookings";
+  const isPastTour =
+    Boolean(experience && pastTourIds.includes(experience.id)) ||
+    returnTo.includes("/client/profile/tours");
+  const [rating, setRating] = useState(4);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [isReviewSubmitted, setIsReviewSubmitted] = useState(false);
+  const visibleRating = hoverRating || rating;
+
+  const handleReviewSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsReviewSubmitted(true);
+  };
 
   if (!experience) {
     return (
@@ -69,7 +85,7 @@ export default function ClientProfileBookingDetail() {
             <ArrowLeftIcon className="size-6" />
           </button>
           <span className="rounded-full bg-emerald-500 px-3 py-2 text-xs font-extrabold">
-            Confirmada
+            {isPastTour ? copy.completed : "Confirmada"}
           </span>
         </div>
         <div className="relative mx-auto mt-24 max-w-5xl px-4 pb-8 md:px-8">
@@ -132,30 +148,81 @@ export default function ClientProfileBookingDetail() {
           </section>
         </section>
 
-        <aside className="h-fit rounded-[1.5rem] bg-white p-5 shadow-sm shadow-gray-200/60">
-          <p className="text-sm font-bold text-gray-500">{t("from")}</p>
-          <p className="mt-1 text-3xl font-extrabold">
-            {formatExperiencePrice(experience)}
-          </p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-gray-500">
-            {copy.bookingDetailHint}
-          </p>
+        {isPastTour ? (
+          <aside className="h-fit rounded-[1.5rem] bg-white p-5 shadow-sm shadow-gray-200/60">
+            <p className="text-sm font-bold text-gray-500">
+              {copy.ratingLabel}
+            </p>
+            <h2 className="mt-1 text-2xl font-extrabold">
+              {copy.ViewDetails}
+            </h2>
+            <form onSubmit={handleReviewSubmit} className="mt-4">
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const Icon = star <= visibleRating ? StarSolidIcon : StarIcon;
 
-          <button className="mt-5 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition active:scale-[0.98]">
-            {copy.requestChanges}
-          </button>
-          <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition active:scale-[0.98]">
-            <ChatBubbleLeftRightIcon className="size-5" />
-            {copy.companyContact}
-          </button>
-          <Link
-            to="/client"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-3 text-sm font-extrabold transition active:scale-[0.98]"
-          >
-            <PhoneIcon className="size-5" />
-            WhatsApp
-          </Link>
-        </aside>
+                  return (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => {
+                        setRating(star);
+                        setIsReviewSubmitted(false);
+                      }}
+                      onMouseEnter={() => setHoverRating(star)}
+                      onMouseLeave={() => setHoverRating(0)}
+                      className="grid size-10 place-items-center rounded-full bg-gray-100 text-yellow-500 transition hover:scale-105 active:scale-90"
+                      aria-label={`${copy.ratingLabel} ${star}`}
+                    >
+                      <Icon className="size-6" />
+                    </button>
+                  );
+                })}
+              </div>
+              <textarea
+                rows={5}
+                placeholder={copy.reviewPlaceholder}
+                value={comment}
+                onChange={(event) => {
+                  setComment(event.target.value);
+                  setIsReviewSubmitted(false);
+                }}
+                className="mt-4 w-full resize-none rounded-3xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm font-semibold outline-none placeholder:text-gray-400"
+              />
+              <button
+                type="submit"
+                className="mt-4 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition active:scale-[0.98]"
+              >
+                {isReviewSubmitted ? copy.reviewSubmitted : copy.ViewDetails}
+              </button>
+            </form>
+          </aside>
+        ) : (
+          <aside className="h-fit rounded-[1.5rem] bg-white p-5 shadow-sm shadow-gray-200/60">
+            <p className="text-sm font-bold text-gray-500">{t("from")}</p>
+            <p className="mt-1 text-3xl font-extrabold">
+              {formatExperiencePrice(experience)}
+            </p>
+            <p className="mt-2 text-sm font-semibold leading-6 text-gray-500">
+              {copy.bookingDetailHint}
+            </p>
+
+            <button className="mt-5 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition active:scale-[0.98]">
+              {copy.requestChanges}
+            </button>
+            <button className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition active:scale-[0.98]">
+              <ChatBubbleLeftRightIcon className="size-5" />
+              {copy.companyContact}
+            </button>
+            <Link
+              to="/client"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-3 text-sm font-extrabold transition active:scale-[0.98]"
+            >
+              <PhoneIcon className="size-5" />
+              WhatsApp
+            </Link>
+          </aside>
+        )}
       </div>
     </main>
   );

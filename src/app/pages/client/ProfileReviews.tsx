@@ -46,7 +46,7 @@ export default function ClientProfileReviews() {
                 className="mt-3 inline-flex items-center gap-2 rounded-full bg-gray-950 px-4 py-2 text-xs font-extrabold text-white transition active:scale-[0.98]"
               >
                 <PencilSquareIcon className="size-4" />
-                {copy.writeReview}
+                {copy.ViewDetails}
               </button>
             </div>
           </article>
