@@ -4,6 +4,7 @@ import {
   StarIcon,
 } from "@heroicons/react/24/outline";
 import { StarIcon as StarSolidIcon } from "@heroicons/react/24/solid";
+import { type FormEvent, useState } from "react";
 import { Link } from "react-router";
 
 import type { Experience } from "@/app/data/tourism";
@@ -19,6 +20,17 @@ export function TourHistoryReviewCard({
   copy: ProfileCopy;
   returnTo: string;
 }) {
+  const [rating, setRating] = useState(4);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const visibleRating = hoverRating || rating;
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitted(true);
+  };
+
   return (
     <article className="overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm shadow-gray-200/60">
       <Link
@@ -59,19 +71,25 @@ export function TourHistoryReviewCard({
           <span className="truncate">{experience.nextSlot}</span>
         </div>
 
-        <div className="mt-4 rounded-3xl bg-gray-50 p-3">
+        <form onSubmit={handleSubmit} className="mt-4 rounded-3xl bg-gray-50 p-3">
           <p className="text-xs font-extrabold text-gray-500">
             {copy.ratingLabel}
           </p>
           <div className="mt-2 flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => {
-              const Icon = star <= 4 ? StarSolidIcon : StarIcon;
+              const Icon = star <= visibleRating ? StarSolidIcon : StarIcon;
 
               return (
                 <button
                   key={star}
                   type="button"
-                  className="grid size-8 place-items-center rounded-full bg-white text-yellow-500 transition active:scale-90"
+                  onClick={() => {
+                    setRating(star);
+                    setIsSubmitted(false);
+                  }}
+                  onMouseEnter={() => setHoverRating(star)}
+                  onMouseLeave={() => setHoverRating(0)}
+                  className="grid size-8 place-items-center rounded-full bg-white text-yellow-500 transition hover:scale-105 active:scale-90"
                   aria-label={`${copy.ratingLabel} ${star}`}
                 >
                   <Icon className="size-5" />
@@ -82,15 +100,20 @@ export function TourHistoryReviewCard({
           <textarea
             rows={3}
             placeholder={copy.reviewPlaceholder}
+            value={comment}
+            onChange={(event) => {
+              setComment(event.target.value);
+              setIsSubmitted(false);
+            }}
             className="mt-3 w-full resize-none rounded-2xl border border-gray-100 bg-white px-3 py-2 text-sm font-semibold outline-none placeholder:text-gray-400"
           />
           <button
-            type="button"
+            type="submit"
             className="mt-3 w-full rounded-full bg-gray-950 px-4 py-3 text-sm font-extrabold text-white transition active:scale-[0.98]"
           >
-            {copy.writeReview}
+            {isSubmitted ? copy.reviewSubmitted : copy.writeReview}
           </button>
-        </div>
+        </form>
       </div>
     </article>
   );

@@ -51,6 +51,7 @@ export type ProfileCopy = {
   tourDate: string;
   ratingLabel: string;
   reviewPlaceholder: string;
+  reviewSubmitted: string;
   stats: {
     trips: string;
     favorites: string;
@@ -109,6 +110,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     tourDate: "Fecha",
     ratingLabel: "Tu calificación",
     reviewPlaceholder: "Cuéntanos cómo estuvo la experiencia...",
+    reviewSubmitted: "Reseña guardada",
     stats: {
       trips: "Tours",
       favorites: "Favoritos",
@@ -152,6 +154,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     tourDate: "Date",
     ratingLabel: "Your rating",
     reviewPlaceholder: "Tell us how the experience went...",
+    reviewSubmitted: "Review saved",
     stats: {
       trips: "Tours",
       favorites: "Favorites",
