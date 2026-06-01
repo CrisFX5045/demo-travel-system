@@ -40,7 +40,7 @@ export default function ClientProfile() {
   );
 
   return (
-    <main className="min-h-screen bg-[#f8f8f6] pb-[calc(5rem+env(safe-area-inset-bottom))] text-gray-950">
+    <main className="min-h-screen animate-[profile-page-in_520ms_ease-out_both] bg-[#f8f8f6] pb-[calc(5rem+env(safe-area-inset-bottom))] text-gray-950">
       <ProfileHeader
         title={copy.title}
         eyebrow={copy.eyebrow}
@@ -50,7 +50,7 @@ export default function ClientProfile() {
       />
       <div className="h-[5.05rem]" />
 
-      <div className="mx-auto grid w-full max-w-5xl gap-4 px-4 py-5 md:grid-cols-[minmax(0,1fr)_20rem] md:px-8 md:py-6">
+      <div className="mx-auto grid w-full max-w-5xl animate-[profile-content-in_620ms_80ms_ease-out_both] gap-4 px-4 py-5 md:grid-cols-[minmax(0,1fr)_20rem] md:px-8 md:py-6">
         <div className="grid gap-4">
           <TravelerSummary
             copy={copy}
@@ -121,6 +121,29 @@ export default function ClientProfile() {
           </ProfileSection>
         </aside>
       </div>
+      <style>
+        {`
+          @keyframes profile-page-in {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+
+          @keyframes profile-content-in {
+            from {
+              opacity: 0;
+              transform: translateY(14px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </main>
   );
 }
