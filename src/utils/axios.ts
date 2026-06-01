@@ -3,6 +3,7 @@ import { JWT_HOST_API } from "@/configs/auth";
 
 const axiosInstance = axios.create({
   baseURL: JWT_HOST_API,
+  timeout: Number(import.meta.env.VITE_TICA_TOUR_API_TIMEOUT_MS ?? 15000),
 });
 
 axiosInstance.interceptors.response.use(

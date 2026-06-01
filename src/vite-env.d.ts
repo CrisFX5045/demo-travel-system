@@ -1,2 +1,16 @@
 /// <reference types="vite/client" />
 /// <reference types="vite-plugin-svgr/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_TICA_TOUR_API_BASE_URL?: string;
+  readonly VITE_TICA_TOUR_API_TIMEOUT_MS?: string;
+  readonly VITE_SUPABASE_AUTH_BASE_URL?: string;
+  readonly VITE_SUPABASE_ANON_KEY?: string;
+  readonly VITE_API_CLIENT_LOGIN?: string;
+  readonly VITE_API_CLIENT_REFRESH?: string;
+  readonly VITE_API_CLIENT_PROFILE?: string;
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv;
+}

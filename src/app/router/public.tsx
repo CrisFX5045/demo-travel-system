@@ -14,6 +14,18 @@ const publicRoutes: RouteObject = {
       }),
     },
     {
+      path: "client/login",
+      lazy: async () => ({
+        Component: (await import("@/app/pages/client/ClientLogin")).default,
+      }),
+    },
+    {
+      path: "client/signup",
+      lazy: async () => ({
+        Component: (await import("@/app/pages/client/ClientSignup")).default,
+      }),
+    },
+    {
       path: "client/feed",
       lazy: async () => ({
         Component: (await import("@/app/pages/client/Feed")).default,

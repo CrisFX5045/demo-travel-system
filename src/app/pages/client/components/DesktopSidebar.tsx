@@ -4,6 +4,7 @@ import {
   HomeIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 
 import { clientLanguages, useClientI18n } from "../i18n";
 
@@ -46,20 +47,30 @@ export function DesktopSidebar({
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
-      {items.map((item, index) => (
-        <a
-          key={item}
-          href={index === 0 ? "#home" : "#"}
-          className={`mb-1 flex items-center gap-4 px-4 py-3 text-base font-bold ${
-            index === 0
-              ? "border-l-4 border-gray-950 bg-gray-100"
-              : "text-gray-600"
-          }`}
-        >
-          <HomeIcon className="size-6" />
-          {text(item)}
-        </a>
-      ))}
+      {items.map((item, index) => {
+        const href = getSidebarHref(item, index);
+        const className = `mb-1 flex items-center gap-4 px-4 py-3 text-base font-bold ${
+          index === 0
+            ? "border-l-4 border-gray-950 bg-gray-100"
+            : "text-gray-600"
+        }`;
+        const content = (
+          <>
+            <HomeIcon className="size-6" />
+            {text(item)}
+          </>
+        );
+
+        return href.startsWith("/") ? (
+          <Link key={item} to={href} className={className}>
+            {content}
+          </Link>
+        ) : (
+          <a key={item} href={href} className={className}>
+            {content}
+          </a>
+        );
+      })}
       <div
         ref={languagePickerRef}
         className="relative mt-6 border-t border-gray-100 px-4 pt-5"
@@ -127,4 +138,12 @@ export function DesktopSidebar({
       </div>
     </aside>
   );
+}
+
+function getSidebarHref(item: string, index: number) {
+  if (index === 0) return "#home";
+  if (item === "Favoritos") return "/client/favorites";
+  if (item === "Registrate") return "/client/signup";
+  if (item === "Iniciar sesion") return "/client/login";
+  return "#";
 }

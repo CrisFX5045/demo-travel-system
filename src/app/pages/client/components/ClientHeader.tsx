@@ -52,11 +52,11 @@ export function ClientHeader({
             {t("searchPlaceholder")}
           </span>
         </Link>
-        <Link to="/client" className="font-bold">
+        <Link to="/client/login" className="font-bold">
           {t("signIn")}
         </Link>
         <Link
-          to="/client"
+          to="/client/signup"
           className="rounded-full bg-gray-950 px-5 py-3 font-bold text-white"
         >
           {t("signUp")}

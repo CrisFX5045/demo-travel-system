@@ -208,7 +208,7 @@ export function MobileDrawer({
             {t("companyLogin")}
           </Link>
           <Link
-            to="/client"
+            to="/client/login"
             onClick={onClose}
             className="mt-3 block rounded-full bg-gray-100 px-5 py-3 text-center text-sm font-extrabold text-gray-950"
           >
