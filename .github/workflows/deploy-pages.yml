@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -25,23 +25,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
+          cache: yarn
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       - name: Build
-        run: npm run build:github
-        env:
-          VITE_SUPABASE_AUTH_BASE_URL: ${{ vars.VITE_SUPABASE_AUTH_BASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
-          VITE_API_CLIENT_LOGIN: ${{ vars.VITE_API_CLIENT_LOGIN }}
-          VITE_API_CLIENT_REFRESH: ${{ vars.VITE_API_CLIENT_REFRESH }}
-          VITE_API_CLIENT_PROFILE: ${{ vars.VITE_API_CLIENT_PROFILE }}
-          VITE_TICA_TOUR_API_BASE_URL: ${{ vars.VITE_TICA_TOUR_API_BASE_URL }}
-          VITE_TICA_TOUR_API_TIMEOUT_MS: ${{ vars.VITE_TICA_TOUR_API_TIMEOUT_MS }}
+        run: yarn build:github
         env:
           VITE_BASE_PATH: /demo-travel-system/
+          VITE_API_CLIENT_LOGIN: ${{ vars.VITE_API_CLIENT_LOGIN }}
+          VITE_API_CLIENT_LOGOUT: ${{ vars.VITE_API_CLIENT_LOGOUT }}
+          VITE_API_CLIENT_PROFILE: ${{ vars.VITE_API_CLIENT_PROFILE }}
+          VITE_API_CLIENT_REFRESH: ${{ vars.VITE_API_CLIENT_REFRESH }}
+          VITE_API_CLIENT_SIGNUP: ${{ vars.VITE_API_CLIENT_SIGNUP }}
+          VITE_API_CLIENT_SOCIAL_LOGIN: ${{ vars.VITE_API_CLIENT_SOCIAL_LOGIN }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_AUTH_BASE_URL: ${{ vars.VITE_SUPABASE_AUTH_BASE_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -55,8 +56,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
