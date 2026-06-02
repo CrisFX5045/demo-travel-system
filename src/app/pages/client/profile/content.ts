@@ -18,6 +18,7 @@ export type ProfileCopy = {
   title: string;
   eyebrow: string;
   verified: string;
+  notVerified: string;
   memberSince: string;
   profileCompletion: string;
   completeProfile: string;
@@ -44,6 +45,7 @@ export type ProfileCopy = {
   requestChanges: string;
   open: string;
   noTrips: string;
+  noHistory: string;
   bookingDetail: string;
   bookingDetailHint: string;
   bookingCode: string;
@@ -87,6 +89,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     title: "Perfil",
     eyebrow: "Tu cuenta viajera",
     verified: "Viajero verificado",
+    notVerified: "No verificado",
     memberSince: "Miembro desde 2026",
     profileCompletion: "Perfil al",
     completeProfile: "Completar perfil",
@@ -113,6 +116,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     requestChanges: "Solicitar cambios",
     open: "Abrir",
     noTrips: "Aún no tienes reservas activas.",
+    noHistory: "Aún no hay historial de reservas",
     bookingDetail: "Detalle de reserva",
     bookingDetailHint: "Información útil para llegar preparado al tour.",
     bookingCode: "Código de reserva",
@@ -141,6 +145,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     title: "Profile",
     eyebrow: "Your traveler account",
     verified: "Verified traveler",
+    notVerified: "Not verified",
     memberSince: "Member since 2026",
     profileCompletion: "Profile at",
     completeProfile: "Complete profile",
@@ -167,6 +172,7 @@ export const profileCopy: Record<ClientLanguage, ProfileCopy> = {
     requestChanges: "Request changes",
     open: "Open",
     noTrips: "You do not have active bookings yet.",
+    noHistory: "There is no booking history yet.",
     bookingDetail: "Booking detail",
     bookingDetailHint: "Useful information to arrive prepared for the tour.",
     bookingCode: "Booking code",

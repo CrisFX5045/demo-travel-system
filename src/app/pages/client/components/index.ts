@@ -2,6 +2,12 @@ export { BottomNav } from "./BottomNav";
 export { CategoryRail } from "./CategoryRail";
 export { CategoryTabs } from "./CategoryTabs";
 export { ClientHeader } from "./ClientHeader";
+export {
+  BookingCardSkeleton,
+  ExperienceCardSkeleton,
+  HorizontalExperienceSkeletons,
+  ProfileSummarySkeleton,
+} from "./ClientSkeletons";
 export { CompanyTourBlock } from "./CompanyTourBlock";
 export { DesktopSidebar } from "./DesktopSidebar";
 export { ExperienceCard } from "./ExperienceCard";

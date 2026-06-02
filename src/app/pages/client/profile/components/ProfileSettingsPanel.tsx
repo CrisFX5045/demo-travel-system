@@ -4,17 +4,42 @@ import {
   MapPinIcon,
   MoonIcon,
 } from "@heroicons/react/24/outline";
-import { type ElementType, useState } from "react";
+import { type ElementType, useEffect, useState } from "react";
 
+import { authApi } from "@/app/api/services";
+import type { TravelerProfile } from "@/app/api/types";
 import { useThemeContext } from "@/app/contexts/theme/context";
 
 import type { ProfileCopy } from "../content";
 
-export function ProfileSettingsPanel({ copy }: { copy: ProfileCopy }) {
-  const { isDark, setThemeMode } = useThemeContext();
+export function ProfileSettingsPanel({
+  copy,
+  profile,
+  darkMode,
+  onProfileUpdated,
+}: {
+  copy: ProfileCopy;
+  profile?: TravelerProfile | null;
+  darkMode?: boolean;
+  onProfileUpdated?: (profile: TravelerProfile) => void;
+}) {
+  const { isDark, setThemeMode, themeMode } = useThemeContext();
   const [travelAlerts, setTravelAlerts] = useState(true);
   const [saveSearches, setSaveSearches] = useState(true);
   const [locationRecommendations, setLocationRecommendations] = useState(false);
+  const [isSavingDarkMode, setIsSavingDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof darkMode !== "boolean") return;
+
+    const preferredTheme = darkMode ? "dark" : "light";
+    if (themeMode !== preferredTheme) {
+      setThemeMode(preferredTheme);
+    }
+    // setThemeMode is recreated by ThemeProvider on each render.
+    // Including it here can cause repeated localStorage writes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [darkMode, themeMode]);
 
   return (
     <div className="grid gap-2">
@@ -23,7 +48,10 @@ export function ProfileSettingsPanel({ copy }: { copy: ProfileCopy }) {
         title={copy.darkMode}
         hint={copy.darkModeHint}
         checked={isDark}
-        onChange={(checked) => setThemeMode(checked ? "dark" : "light")}
+        disabled={isSavingDarkMode}
+        onChange={(checked) => {
+          void handleDarkModeChange(checked);
+        }}
       />
       <SettingToggle
         icon={BellAlertIcon}
@@ -48,6 +76,36 @@ export function ProfileSettingsPanel({ copy }: { copy: ProfileCopy }) {
       />
     </div>
   );
+
+  async function handleDarkModeChange(checked: boolean) {
+    const previousTheme = themeMode;
+    const nextTheme = checked ? "dark" : "light";
+
+    setThemeMode(nextTheme);
+    setIsSavingDarkMode(true);
+
+    try {
+      const updatedProfile = await authApi.updateProfile({
+        fullName: profile?.fullName,
+        phone: profile?.phone,
+        avatarUrl: profile?.avatarUrl || null,
+        preferredLanguage: profile?.preferredLanguage,
+        preferredCurrency: profile?.preferredCurrency,
+        darkMode: checked,
+      });
+
+      onProfileUpdated?.({
+        ...(profile ?? {}),
+        ...updatedProfile,
+        darkMode: checked,
+      });
+    } catch (error) {
+      setThemeMode(previousTheme);
+      console.error("No se pudo actualizar el perfil.", error);
+    } finally {
+      setIsSavingDarkMode(false);
+    }
+  }
 }
 
 function SettingToggle({
@@ -55,12 +113,14 @@ function SettingToggle({
   title,
   hint,
   checked,
+  disabled = false,
   onChange,
 }: {
   icon: ElementType;
   title: string;
   hint: string;
   checked: boolean;
+  disabled?: boolean;
   onChange: (checked: boolean) => void;
 }) {
   return (
@@ -78,10 +138,11 @@ function SettingToggle({
       </span>
       <button
         type="button"
+        disabled={disabled}
         onClick={() => onChange(!checked)}
         className={`relative h-7 w-12 shrink-0 rounded-full transition ${
           checked ? "bg-gray-950 dark:bg-primary-500" : "bg-gray-300 dark:bg-dark-450"
-        }`}
+        } ${disabled ? "cursor-wait opacity-70" : ""}`}
         aria-pressed={checked}
         aria-label={title}
       >

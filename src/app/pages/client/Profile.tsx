@@ -1,10 +1,19 @@
-import { useMemo } from "react";
+import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router";
 
-import { experiences } from "@/app/data/tourism";
+import { useApiResource } from "@/app/api/hooks";
+import {
+  normalizeBookingExperiences,
+  normalizeTravelerProfile,
+} from "@/app/api/normalizers";
+import { authApi, travelerApi } from "@/app/api/services";
+import { getClientSession, hasClientAccessToken } from "@/app/api/session";
+import type { Experience } from "@/app/data/tourism";
 
 import { useScrollChrome } from "./hooks/useScrollChrome";
 import { useClientI18n } from "./i18n";
+import { BookingCardSkeleton, ProfileSummarySkeleton } from "./components";
 import {
   BookingPreviewCard,
   ProfileActionList,
@@ -20,24 +29,71 @@ import {
   supportActions,
 } from "./profile/content";
 
+const PROFILE_CACHE_TTL_MS = 10 * 60 * 1000;
+
 export default function ClientProfile() {
   const navigate = useNavigate();
   const { isMobileHeaderVisible } = useScrollChrome();
   const { language, t } = useClientI18n();
   const copy = profileCopy[language];
-  const isIdentityVerified = true;
+  const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
+  const clientSession = useMemo(() => getClientSession(), []);
+  const cachedProfile = useMemo(() => {
+    const sessionProfile = clientSession?.profile;
+    return sessionProfile ? normalizeTravelerProfile(sessionProfile) : null;
+  }, [clientSession]);
+  const shouldUseCachedProfileOnly =
+    Boolean(cachedProfile?.id) &&
+    clientSession?.profileNeedsRefresh !== true &&
+    isRecentIsoDate(clientSession?.profileFetchedAt, PROFILE_CACHE_TTL_MS);
+  const {
+    data: profile,
+    isLoading: isProfileLoading,
+    setData: setProfile,
+  } = useApiResource(() => authApi.getProfileMe(), [], {
+    enabled: isAuthenticated && !shouldUseCachedProfileOnly,
+    initialData: cachedProfile,
+    requestKey: "client-profile-me",
+  });
+  const {
+    data: upcomingBookings,
+    isLoading: isUpcomingLoading,
+  } = useApiResource(() => travelerApi.getBookings("upcoming"), [], {
+    enabled: isAuthenticated,
+    requestKey: "client-bookings-upcoming",
+  });
+  const {
+    data: pastBookings,
+    isLoading: isPastLoading,
+  } = useApiResource(() => travelerApi.getBookings("past"), [], {
+    enabled: isAuthenticated,
+    requestKey: "client-bookings-past",
+  });
+  const hasRealProfile =
+    Boolean(profile?.fullName) &&
+    typeof profile?.profileCompletion === "number";
+  const isIdentityVerified = profile?.isIdentityVerified ?? false;
   const upcomingTrips = useMemo(
-    () => experiences.filter((experience) =>
-      ["EXP-1042", "EXP-1188"].includes(experience.id),
-    ),
-    [],
+    () => getBookingExperiences(upcomingBookings).slice(0, 3),
+    [upcomingBookings],
   );
   const pastTrips = useMemo(
-    () => experiences.filter((experience) =>
-      ["EXP-1217", "EXP-1475"].includes(experience.id),
-    ),
-    [],
+    () => getBookingExperiences(pastBookings).slice(0, 3),
+    [pastBookings],
   );
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/client/login", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const logoutClient = async () => {
+    await authApi.logoutClient();
+    navigate("/client", { replace: true });
+  };
+
+  if (!isAuthenticated) return null;
 
   return (
     <main className="min-h-screen animate-[profile-page-in_520ms_ease-out_both] bg-[#f8f8f6] pb-[calc(5rem+env(safe-area-inset-bottom))] text-gray-950">
@@ -52,11 +108,25 @@ export default function ClientProfile() {
 
       <div className="mx-auto grid w-full max-w-5xl animate-[profile-content-in_620ms_80ms_ease-out_both] gap-4 px-4 py-5 md:grid-cols-[minmax(0,1fr)_20rem] md:px-8 md:py-6">
         <div className="grid gap-4">
-          <TravelerSummary
+          {isProfileLoading || !hasRealProfile ? (
+            <ProfileSummarySkeleton />
+          ) : (
+            <TravelerSummary
+              copy={copy}
+              isIdentityVerified={isIdentityVerified}
+              fullName={profile?.fullName ?? ""}
+              memberSince={profile?.memberSince}
+              profileCompletion={profile?.profileCompletion ?? 0}
+              avatarUrl={profile?.avatarUrl}
+            />
+          )}
+          <ProfileStats
             copy={copy}
-            isIdentityVerified={isIdentityVerified}
+            stats={{
+              trips: upcomingTrips.length + pastTrips.length,
+            }}
+            isLoading={isUpcomingLoading || isPastLoading}
           />
-          <ProfileStats copy={copy} />
 
           <ProfileSection
             title={copy.nextTrips}
@@ -65,7 +135,12 @@ export default function ClientProfile() {
             actionHref="/client/profile/bookings"
           >
             <div className="grid gap-3">
-              {upcomingTrips.length > 0 ? (
+              {isUpcomingLoading ? (
+                <>
+                  <BookingCardSkeleton />
+                  <BookingCardSkeleton />
+                </>
+              ) : upcomingTrips.length > 0 ? (
                 upcomingTrips.map((experience) => (
                   <BookingPreviewCard
                     key={experience.id}
@@ -89,14 +164,25 @@ export default function ClientProfile() {
             actionHref="/client/profile/tours"
           >
             <div className="grid gap-3">
-              {pastTrips.map((experience) => (
-                <BookingPreviewCard
-                  key={experience.id}
-                  experience={experience}
-                  actionLabel={copy.completed}
-                  returnTo="/client/profile"
-                />
-              ))}
+              {isPastLoading ? (
+                <>
+                  <BookingCardSkeleton />
+                  <BookingCardSkeleton />
+                </>
+              ) : pastTrips.length > 0 ? (
+                pastTrips.map((experience) => (
+                  <BookingPreviewCard
+                    key={experience.id}
+                    experience={experience}
+                    actionLabel={copy.completed}
+                    returnTo="/client/profile"
+                  />
+                ))
+              ) : (
+                <p className="rounded-3xl bg-gray-50 px-4 py-8 text-center text-sm font-bold text-gray-500">
+                  {copy.noHistory}
+                </p>
+              )}
             </div>
           </ProfileSection>
         </div>
@@ -117,8 +203,24 @@ export default function ClientProfile() {
           </ProfileSection>
 
           <ProfileSection title={copy.settings}>
-            <ProfileSettingsPanel copy={copy} />
+            <ProfileSettingsPanel
+              copy={copy}
+              profile={profile}
+              darkMode={profile?.darkMode}
+              onProfileUpdated={setProfile}
+            />
           </ProfileSection>
+
+          <button
+            type="button"
+            onClick={() => {
+              void logoutClient();
+            }}
+            className="flex items-center justify-center gap-2 rounded-3xl border border-red-100 bg-white px-5 py-4 text-sm font-extrabold text-red-600 shadow-sm shadow-red-100/60 transition hover:bg-red-50 active:scale-[0.98]"
+          >
+            <ArrowRightOnRectangleIcon className="size-5" />
+            {language === "es" ? "Cerrar sesión" : "Log out"}
+          </button>
         </aside>
       </div>
       <style>
@@ -146,4 +248,18 @@ export default function ClientProfile() {
       </style>
     </main>
   );
+}
+
+function getBookingExperiences(bookings: unknown): Experience[] {
+  if (!bookings) return [];
+  return normalizeBookingExperiences(bookings);
+}
+
+function isRecentIsoDate(value: string | undefined, windowMs: number) {
+  if (!value) return false;
+
+  const time = new Date(value).getTime();
+  if (Number.isNaN(time)) return false;
+
+  return Date.now() - time <= windowMs;
 }
