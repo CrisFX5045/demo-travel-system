@@ -145,10 +145,22 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     <Page title={`Cliente - ${t(copy.title)}`}>
       <main className="relative min-h-screen overflow-hidden bg-[#f8f8f6] text-gray-950">
         <AuthImageCarousel activeImageIndex={activeImageIndex} variant="mobile" />
+        <AuthImageCarousel activeImageIndex={activeImageIndex} variant="desktop-bg" />
 
-        <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-6xl items-center gap-8 px-4 py-6 md:grid-cols-[28rem_minmax(0,1fr)] md:px-8 lg:py-10">
-          <section className="animate-[auth-panel-in_520ms_ease-out_both]">
-            <Card className="animate-[auth-card-in_620ms_80ms_ease-out_both] rounded-[1.65rem] border border-gray-100 bg-white p-5 shadow-2xl shadow-gray-950/15 sm:p-7 md:shadow-xl md:shadow-gray-950/5">
+        <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-6xl items-center px-4 pb-6 pt-20 md:px-8 md:py-6 lg:py-10">
+          <section
+            className={`relative isolate mx-auto w-full animate-[auth-card-in_620ms_80ms_ease-out_both] ${
+              isSignup ? "max-w-[58rem]" : "max-w-[31rem]"
+            }`}
+          >
+            <img
+              src="/images/login-singup/3.png"
+              alt=""
+              aria-hidden="true"
+              className="pointer-events-none absolute left-0 top-[-60px] z-[999] w-28 drop-shadow-2xl"
+              draggable={false}
+            />
+            <Card className="relative z-10 rounded-[1.65rem] border border-gray-100 bg-white p-5 shadow-2xl shadow-gray-950/15 sm:p-7 md:p-8 md:shadow-xl md:shadow-gray-950/10">
               <div className="mb-6 flex animate-[auth-panel-in_520ms_120ms_ease-out_both] items-center justify-between gap-3">
                 <Link
                   to="/client"
@@ -191,7 +203,12 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 </p>
               </div>
 
-              <form onSubmit={submitForm} className="mt-5 grid gap-4">
+              <form
+                onSubmit={submitForm}
+                className={`mt-5 grid gap-4 ${
+                  isSignup ? "md:grid-cols-2" : ""
+                }`}
+              >
                 {isSignup && (
                   <Input
                     required
@@ -244,12 +261,16 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 />
 
                 {authError && (
-                  <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+                  <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-bold text-red-700 md:col-span-2">
                     {authError}
                   </p>
                 )}
 
-                <div className="flex items-center justify-between gap-3 text-sm">
+                <div
+                  className={`flex items-center justify-between gap-3 text-sm ${
+                    isSignup ? "md:col-span-2" : ""
+                  }`}
+                >
                   <Checkbox
                     checked={acceptedTerms}
                     onChange={(event) => setAcceptedTerms(event.target.checked)}
@@ -266,7 +287,9 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 <Button
                   type="submit"
                   color="primary"
-                  className="h-12 w-full rounded-full font-extrabold shadow-lg shadow-primary-500/20"
+                  className={`h-12 w-full rounded-full font-extrabold shadow-lg shadow-primary-500/20 ${
+                    isSignup ? "md:col-span-2" : ""
+                  }`}
                   disabled={(isSignup && !acceptedTerms) || isSubmitting}
                 >
                   {isSubmitting
@@ -321,13 +344,6 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 </Link>
               </p>
             </Card>
-          </section>
-
-          <section className="hidden min-h-[35rem] animate-[auth-media-in_650ms_ease-out_both] overflow-hidden rounded-[2rem] bg-gray-950 md:block">
-            <AuthImageCarousel
-              activeImageIndex={activeImageIndex}
-              variant="desktop"
-            />
           </section>
         </div>
 
@@ -421,7 +437,7 @@ function AuthImageCarousel({
   variant,
 }: {
   activeImageIndex: number;
-  variant: "desktop" | "mobile";
+  variant: "desktop" | "desktop-bg" | "mobile";
 }) {
   if (variant === "mobile") {
     return (
@@ -437,6 +453,26 @@ function AuthImageCarousel({
             draggable={false}
           />
         ))}
+        <div className="absolute inset-0 bg-black/35" />
+      </div>
+    );
+  }
+
+  if (variant === "desktop-bg") {
+    return (
+      <div className="absolute inset-0 z-0 hidden md:block">
+        {authImages.map((image, index) => (
+          <img
+            key={image}
+            src={image}
+            alt=""
+            className={`absolute inset-0 z-0 h-full w-full scale-105 object-cover object-[center_22%] blur-[6px] transition-opacity duration-1000 ease-out ${
+              index === activeImageIndex ? "opacity-100" : "opacity-0"
+            }`}
+            draggable={false}
+          />
+        ))}
+        <div className="absolute inset-0 z-[1] bg-black/35" />
       </div>
     );
   }
