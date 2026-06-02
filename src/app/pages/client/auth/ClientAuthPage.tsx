@@ -1,5 +1,7 @@
 import {
   ArrowLeftIcon,
+  BanknotesIcon,
+  ChevronDownIcon,
   EnvelopeIcon,
   LockClosedIcon,
   PhoneIcon,
@@ -8,25 +10,23 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import { authApi } from "@/app/api/services";
+import { setClientSession } from "@/app/api/session";
 import { Page } from "@/components/shared/Page";
 import { Button, Card, Checkbox, Input } from "@/components/ui";
 import { clientLanguages, useClientI18n } from "../i18n";
 
 type AuthMode = "login" | "signup";
 type AuthProvider = "email" | "google" | "apple";
+type PreferredCurrency = "CRC" | "USD";
 
-type SupabasePasswordTokenResponse = {
-  access_token: string;
-  refresh_token: string;
-  token_type: string;
-  expires_in: number;
-  expires_at?: number;
-  user: {
-    id: string;
-    email?: string;
-    role?: string;
-  };
-};
+const currencyOptions: Array<{
+  value: PreferredCurrency;
+  label: string;
+}> = [
+  { value: "CRC", label: "CRC - Colon costarricense" },
+  { value: "USD", label: "USD - Dollar estadounidense" },
+];
 
 const authImages = [
   "/images/login-singup/1.png",
@@ -66,6 +66,8 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [preferredCurrency, setPreferredCurrency] =
+    useState<PreferredCurrency>("CRC");
   const copy = authCopy[mode];
   const isSignup = mode === "signup";
 
@@ -78,28 +80,18 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
   }, []);
 
   const completeDemoAuth = (provider: AuthProvider) => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        "clientSession",
-        JSON.stringify({
-          provider,
-          status: "demo-authenticated",
-          createdAt: new Date().toISOString(),
-        }),
-      );
-    }
+    setClientSession({
+      provider,
+      status: "demo-authenticated",
+      createdAt: new Date().toISOString(),
+    });
 
-    navigate("/client/profile");
+    navigate("/client");
   };
 
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAuthError(null);
-
-    if (isSignup) {
-      completeDemoAuth("email");
-      return;
-    }
 
     const formData = new FormData(event.currentTarget);
     const email = String(formData.get("email") ?? "").trim();
@@ -113,31 +105,36 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     setIsSubmitting(true);
 
     try {
-      const session = await loginWithPassword({ email, password });
-      const profile = await fetchClientProfile(session.access_token);
+      if (isSignup) {
+        const fullName = String(formData.get("fullName") ?? "").trim();
+        const phone = String(formData.get("phone") ?? "").trim();
+        const currency = parsePreferredCurrency(formData.get("preferredCurrency"));
 
-      window.localStorage.setItem(
-        "clientSession",
-        JSON.stringify({
-          provider: "email",
-          status: "authenticated",
-          accessToken: session.access_token,
-          refreshToken: session.refresh_token,
-          tokenType: session.token_type,
-          expiresIn: session.expires_in,
-          expiresAt: session.expires_at,
-          user: session.user,
-          profile,
-          createdAt: new Date().toISOString(),
-        }),
-      );
+        if (!fullName) {
+          setAuthError("Ingresa tu nombre completo.");
+          return;
+        }
 
-      navigate("/client/profile");
+        await authApi.registerTraveler({
+          email,
+          password,
+          fullName,
+          phone: phone || undefined,
+          preferredLanguage: language,
+          preferredCurrency: currency,
+        });
+      } else {
+        await authApi.loginWithPassword({ email, password });
+      }
+
+      navigate("/client");
     } catch (error) {
       setAuthError(
         error instanceof Error
           ? error.message
-          : "No se pudo iniciar sesion.",
+          : isSignup
+            ? "No se pudo crear la cuenta."
+            : "No se pudo iniciar sesion.",
       );
     } finally {
       setIsSubmitting(false);
@@ -198,6 +195,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 {isSignup && (
                   <Input
                     required
+                    name="fullName"
                     label={t("authFullName")}
                     placeholder={t("authFullNamePlaceholder")}
                     prefix={<UserIcon className="size-5" strokeWidth={1.5} />}
@@ -215,10 +213,19 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
 
                 {isSignup && (
                   <Input
+                    name="phone"
                     label={t("authPhone")}
                     placeholder={t("authPhonePlaceholder")}
                     type="tel"
                     prefix={<PhoneIcon className="size-5" strokeWidth={1.5} />}
+                  />
+                )}
+
+                {isSignup && (
+                  <CurrencyDropdown
+                    value={preferredCurrency}
+                    onChange={setPreferredCurrency}
+                    label={t("authPreferredCurrency")}
                   />
                 )}
 
@@ -262,7 +269,11 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                   className="h-12 w-full rounded-full font-extrabold shadow-lg shadow-primary-500/20"
                   disabled={(isSignup && !acceptedTerms) || isSubmitting}
                 >
-                  {isSubmitting ? "Validando..." : t(copy.action)}
+                  {isSubmitting
+                    ? isSignup
+                      ? "Creando cuenta..."
+                      : "Validando..."
+                    : t(copy.action)}
                 </Button>
               </form>
 
@@ -361,6 +372,50 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
   );
 }
 
+function CurrencyDropdown({
+  value,
+  onChange,
+  label,
+}: {
+  value: PreferredCurrency;
+  onChange: (value: PreferredCurrency) => void;
+  label: string;
+}) {
+  return (
+    <div className="grid gap-2">
+      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <div className="relative">
+        <BanknotesIcon
+          className="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400"
+          strokeWidth={1.5}
+        />
+        <select
+          name="preferredCurrency"
+          value={value}
+          onChange={(event) =>
+            onChange(parsePreferredCurrency(event.target.value))
+          }
+          className="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-11 pr-10 text-sm font-medium text-gray-800 outline-none transition placeholder:text-gray-400 hover:border-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-primary-500/30"
+        >
+          {currencyOptions.map((currency) => (
+            <option key={currency.value} value={currency.value}>
+              {currency.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDownIcon
+          className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-gray-400"
+          strokeWidth={1.8}
+        />
+      </div>
+    </div>
+  );
+}
+
+function parsePreferredCurrency(value: FormDataEntryValue | string | null): PreferredCurrency {
+  return value === "USD" ? "USD" : "CRC";
+}
+
 function AuthImageCarousel({
   activeImageIndex,
   variant,
@@ -412,109 +467,4 @@ function AuthImageCarousel({
       </div>
     </div>
   );
-}
-
-async function loginWithPassword({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) {
-  const url = buildUrl(
-    import.meta.env.VITE_SUPABASE_AUTH_BASE_URL,
-    import.meta.env.VITE_API_CLIENT_LOGIN,
-  );
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: buildSupabaseHeaders(),
-    body: JSON.stringify({ email, password }),
-  });
-
-  const data = await readJsonResponse<SupabasePasswordTokenResponse>(response);
-
-  if (!response.ok) {
-    throw new Error(getApiErrorMessage(data, "Credenciales invalidas."));
-  }
-
-  if (!data.access_token || !data.refresh_token) {
-    throw new Error("La respuesta de autenticacion no contiene tokens.");
-  }
-
-  return data;
-}
-
-async function fetchClientProfile(accessToken: string) {
-  const profileUrl = import.meta.env.VITE_API_CLIENT_PROFILE;
-
-  if (!profileUrl) {
-    return null;
-  }
-
-  const response = await fetch(profileUrl, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/json",
-    },
-  });
-
-  const data = await readJsonResponse<unknown>(response);
-
-  if (!response.ok) {
-    throw new Error(getApiErrorMessage(data, "No se pudo cargar el perfil."));
-  }
-
-  return data;
-}
-
-function buildSupabaseHeaders() {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  if (anonKey) {
-    headers.apikey = anonKey;
-  }
-
-  return headers;
-}
-
-function buildUrl(baseUrl?: string, path?: string) {
-  if (!baseUrl || !path) {
-    throw new Error("Faltan variables de entorno para autenticacion.");
-  }
-
-  return `${baseUrl.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
-}
-
-async function readJsonResponse<T>(response: Response): Promise<T> {
-  const text = await response.text();
-
-  if (!text) {
-    return null as T;
-  }
-
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new Error("La API respondio con un formato no valido.");
-  }
-}
-
-function getApiErrorMessage(data: unknown, fallback: string) {
-  if (data && typeof data === "object") {
-    const record = data as Record<string, unknown>;
-
-    if (typeof record.msg === "string") return record.msg;
-    if (typeof record.message === "string") return record.message;
-    if (typeof record.error_description === "string") {
-      return record.error_description;
-    }
-    if (typeof record.error === "string") return record.error;
-  }
-
-  return fallback;
 }
