@@ -37,16 +37,16 @@ export type ClientNavItem = {
 export const tabs: ClientTab[] = [
   {
     label: "Tours",
-    image: "/images/travel/travel-2.jpg",
+    image: "/images/superior-categories/category-1.png",
   },
   {
     label: "Experiencias",
-    image: "/images/travel/travel-5.jpg",
+    image: "/images/superior-categories/category-2.png",
     badge: "NOVEDAD",
   },
   {
     label: "Servicios",
-    image: "/images/travel/picnic-2.jpg",
+    image: "/images/superior-categories/category-3.png",
     badge: "NOVEDAD",
   },
 ];
