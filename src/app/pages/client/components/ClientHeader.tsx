@@ -8,11 +8,13 @@ import { useClientI18n } from "../i18n";
 import { SearchButton } from "./SearchButton";
 
 export function ClientHeader({
+  isAuthenticated,
   isMenuOpen,
   isMobileHeaderVisible,
   onToggleDesktopMenu,
   onOpenMobileMenu,
 }: {
+  isAuthenticated: boolean;
   isMenuOpen: boolean;
   isMobileHeaderVisible: boolean;
   onToggleDesktopMenu: () => void;
@@ -52,15 +54,26 @@ export function ClientHeader({
             {t("searchPlaceholder")}
           </span>
         </Link>
-        <Link to="/client/login" className="font-bold">
-          {t("signIn")}
-        </Link>
-        <Link
-          to="/client/signup"
-          className="rounded-full bg-gray-950 px-5 py-3 font-bold text-white"
-        >
-          {t("signUp")}
-        </Link>
+        {isAuthenticated ? (
+          <Link
+            to="/client/profile"
+            className="rounded-full bg-gray-950 px-5 py-3 font-bold text-white"
+          >
+            {t("profile")}
+          </Link>
+        ) : (
+          <>
+            <Link to="/client/login" className="font-bold">
+              {t("signIn")}
+            </Link>
+            <Link
+              to="/client/signup"
+              className="rounded-full bg-gray-950 px-5 py-3 font-bold text-white"
+            >
+              {t("signUp")}
+            </Link>
+          </>
+        )}
       </div>
 
       <div className="px-4 pb-3 pt-3 lg:hidden">
@@ -75,12 +88,16 @@ export function ClientHeader({
           <Link to="/client" className="text-xl font-extrabold">
             CR Trips
           </Link>
-          <Link
-            to="/login"
-            className="rounded-full bg-gray-950 px-3.5 py-2 text-xs font-bold text-white"
-          >
-            {t("companies")}
-          </Link>
+          {isAuthenticated ? (
+            <span className="size-8" aria-hidden="true" />
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-full bg-gray-950 px-3.5 py-2 text-xs font-bold text-white"
+            >
+              {t("companies")}
+            </Link>
+          )}
         </div>
 
         <SearchButton />

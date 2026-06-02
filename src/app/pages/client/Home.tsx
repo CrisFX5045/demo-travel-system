@@ -1,7 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router";
 
+import { useApiResource } from "@/app/api/hooks";
+import {
+  CLIENT_SESSION_EVENT,
+  hasClientAccessToken,
+} from "@/app/api/session";
+import { publicApi } from "@/app/api/services";
+import type { Experience } from "@/app/data/tourism";
 import { experiences, provinces } from "@/app/data/tourism";
 import {
   BottomNav,
@@ -13,6 +20,7 @@ import {
   ExperienceCard,
   FeedPreviewSection,
   FilterRail,
+  HorizontalExperienceSkeletons,
   MapPreviewSection,
   MobileDrawer,
   PromotionsSection,
@@ -24,8 +32,8 @@ import {
   desktopSidebarItems,
   filterPills,
   navItems,
-  popularTours,
   tabs,
+  type PopularTour,
 } from "./content";
 import { groupExperiencesByCompany } from "./company";
 import { useFeedReactions } from "./feed/hooks/useFeedReactions";
@@ -42,15 +50,40 @@ export default function ClientHome() {
   const { isBottomNavVisible, isMobileHeaderVisible } = useScrollChrome();
   const { liked, toggleLiked } = useFeedReactions();
   const { t, text } = useClientI18n();
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => hasClientAccessToken(),
+  );
   const [selectedProvince, setSelectedProvince] = useState<string>(
     t("anyLocation"),
   );
   const [activeClientType, setActiveClientType] = useState("Tours");
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const featuredExperience = experiences[0];
-  const visibleExperiences = getHomeExperiences(activeClientType);
+  const {
+    data: apiExperiences,
+    isLoading: isExperiencesLoading,
+  } = useApiResource(() => publicApi.getExperiences(), []);
+  const sourceExperiences = useMemo(
+    () => (apiExperiences && apiExperiences.length > 0 ? apiExperiences : experiences),
+    [apiExperiences],
+  );
+  const featuredExperience = sourceExperiences[0];
+  const visibleExperiences = getHomeExperiences(activeClientType, sourceExperiences);
+  const popularTours = getPopularTours(sourceExperiences);
   const companyGroups = groupExperiencesByCompany(visibleExperiences);
   const sectionTitle = getHomeSectionTitle(activeClientType);
+  const authAwareNavItems = useMemo(
+    () => getAuthAwareNavItems(navItems, isAuthenticated),
+    [isAuthenticated],
+  );
+  const authAwareSidebarItems = useMemo(
+    () =>
+      isAuthenticated
+        ? desktopSidebarItems.filter(
+            (item) => item !== "Registrate" && item !== "Iniciar sesion",
+          )
+        : desktopSidebarItems,
+    [isAuthenticated],
+  );
 
   const closeMenu = () => setIsMenuOpen(false);
   const applyFilters = (filters: {
@@ -72,12 +105,25 @@ export default function ClientHome() {
     navigate(`/client/explore?${params.toString()}`);
   };
 
+  useEffect(() => {
+    const syncAuthStatus = () => {
+      setIsAuthenticated(hasClientAccessToken());
+    };
+
+    window.addEventListener(CLIENT_SESSION_EVENT, syncAuthStatus);
+
+    return () => {
+      window.removeEventListener(CLIENT_SESSION_EVENT, syncAuthStatus);
+    };
+  }, []);
+
   return (
     <main
       id="home"
       className="min-h-screen w-full max-w-[100svw] overflow-x-hidden bg-white pb-[calc(5.8rem+env(safe-area-inset-bottom))] text-gray-950 dark:bg-white"
     >
       <ClientHeader
+        isAuthenticated={isAuthenticated}
         isMenuOpen={isMenuOpen}
         isMobileHeaderVisible={isMobileHeaderVisible}
         onToggleDesktopMenu={() => setIsMenuOpen((current) => !current)}
@@ -87,14 +133,19 @@ export default function ClientHome() {
 
       <MobileDrawer
         isOpen={isMenuOpen}
-        navItems={navItems}
+        navItems={authAwareNavItems}
         provinces={provinces}
         selectedProvince={selectedProvince}
+        isAuthenticated={isAuthenticated}
         onSelectProvince={setSelectedProvince}
         onClose={closeMenu}
       />
 
-      <DesktopSidebar isOpen={isMenuOpen} items={desktopSidebarItems} />
+      <DesktopSidebar
+        isOpen={isMenuOpen}
+        items={authAwareSidebarItems}
+        isAuthenticated={isAuthenticated}
+      />
 
       <div
         className={`mx-auto w-full max-w-[100svw] overflow-x-hidden transition-[padding] duration-200 xl:max-w-[116rem] ${
@@ -120,7 +171,9 @@ export default function ClientHome() {
               to="/client/explore?type=Tours&tag=Jaco"
             />
             <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
-              {popularTours.map((tour) => (
+              {isExperiencesLoading ? (
+                <HorizontalExperienceSkeletons />
+              ) : popularTours.map((tour) => (
                 <TourCard
                   key={tour.title}
                   tour={tour}
@@ -139,7 +192,9 @@ export default function ClientHome() {
             to={`/client/explore?type=${encodeURIComponent(activeClientType)}`}
           />
           <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
-            {visibleExperiences.map((experience) => (
+            {isExperiencesLoading ? (
+              <HorizontalExperienceSkeletons />
+            ) : visibleExperiences.map((experience) => (
               <ExperienceCard
                 key={experience.id}
                 experience={experience}
@@ -150,7 +205,7 @@ export default function ClientHome() {
           </div>
         </section>
 
-        <PromotionsSection experiences={experiences} />
+        <PromotionsSection experiences={sourceExperiences} />
         <section className="px-4 pb-8 md:px-8 md:pb-10">
           <SectionHeader
             title={t("companiesWithTours")}
@@ -175,7 +230,10 @@ export default function ClientHome() {
         <MapPreviewSection />
       </div>
 
-      <BottomNav isVisible={isBottomNavVisible} navItems={navItems} />
+      <BottomNav
+        isVisible={isBottomNavVisible}
+        navItems={authAwareNavItems}
+      />
       <ClientFilterSheet
         isOpen={isFilterSheetOpen}
         activeType={activeClientType}
@@ -187,24 +245,53 @@ export default function ClientHome() {
   );
 }
 
-function getHomeExperiences(activeType: string) {
+function getAuthAwareNavItems(
+  items: typeof navItems,
+  isAuthenticated: boolean,
+) {
+  if (isAuthenticated) return items;
+
+  return items.map((item) =>
+    item.label === "Perfil" || item.label === "Favoritos"
+      ? { ...item, href: "/client/login" }
+      : item,
+  );
+}
+
+function getHomeExperiences(activeType: string, sourceExperiences: Experience[]) {
   if (activeType === "Servicios") {
-    return experiences.filter((experience) =>
+    return sourceExperiences.filter((experience) =>
       ["Cultura", "Playa", "Wellness"].includes(experience.category),
     );
   }
 
   if (activeType === "Experiencias") {
-    return experiences.filter((experience) =>
+    return sourceExperiences.filter((experience) =>
       ["Naturaleza", "Cultura"].includes(experience.category),
     );
   }
 
-  return experiences.filter((experience) =>
+  return sourceExperiences.filter((experience) =>
     ["Aventura", "Playa", "Naturaleza", "Wellness"].includes(
       experience.category,
     ),
   );
+}
+
+function getPopularTours(sourceExperiences: Experience[]): PopularTour[] {
+  return sourceExperiences.slice(0, 4).map((experience) => ({
+    id: experience.id,
+    title: experience.title,
+    company: experience.company,
+    location: `${experience.zone}, ${experience.province}`,
+    price: `Desde ${new Intl.NumberFormat("es-CR", {
+      style: "currency",
+      currency: experience.priceCurrency,
+      maximumFractionDigits: 0,
+    }).format(experience.price)} por persona`,
+    rating: String(experience.rating || "Nuevo"),
+    image: experience.image,
+  }));
 }
 
 function getHomeSectionTitle(activeType: string) {

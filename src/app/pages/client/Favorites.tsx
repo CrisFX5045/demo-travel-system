@@ -10,12 +10,17 @@ import {
   HeartIcon as HeartSolidIcon,
 } from "@heroicons/react/24/solid";
 import type { ElementType } from "react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
 
+import { useApiResource } from "@/app/api/hooks";
+import { normalizeFavoriteExperiences } from "@/app/api/normalizers";
+import { hasClientAccessToken } from "@/app/api/session";
+import { travelerApi } from "@/app/api/services";
 import { experiences } from "@/app/data/tourism";
 import type { Experience } from "@/app/data/tourism";
 
+import { ExperienceCardSkeleton } from "./components";
 import { readFeedReactionMap } from "./feed/storage";
 import { useScrollChrome } from "./hooks/useScrollChrome";
 import { useClientI18n } from "./i18n";
@@ -25,6 +30,7 @@ export default function ClientFavorites() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, language } = useClientI18n();
+  const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<
     "all" | "favorites" | "saved"
@@ -32,14 +38,18 @@ export default function ClientFavorites() {
   const { isMobileHeaderVisible } = useScrollChrome();
   const liked = readFeedReactionMap("liked");
   const saved = readFeedReactionMap("saved");
-  const favoriteExperiences = getSectionExperiences(liked, [
-    "EXP-1042",
-    "EXP-1217",
-  ]);
-  const savedExperiences = getSectionExperiences(saved, [
-    "EXP-1188",
-    "EXP-1301",
-  ]);
+  const {
+    data: apiFavorites,
+    isLoading: isFavoritesLoading,
+  } = useApiResource(() => travelerApi.getFavorites(), [], {
+    enabled: isAuthenticated,
+    requestKey: "client-favorites",
+  });
+  const favoriteExperiences =
+    apiFavorites && normalizeFavoriteExperiences(apiFavorites).length > 0
+      ? normalizeFavoriteExperiences(apiFavorites)
+      : getSectionExperiences(liked);
+  const savedExperiences = getSectionExperiences(saved);
   const visibleFavoriteExperiences = filterExperiences(
     favoriteExperiences,
     searchQuery,
@@ -55,6 +65,14 @@ export default function ClientFavorites() {
   const leaveFavorites = () => {
     navigate(returnTo);
   };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/client/login", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) return null;
 
   return (
     <main
@@ -141,6 +159,7 @@ export default function ClientFavorites() {
                 : "You do not have favorites yet."
             }
             experiences={visibleFavoriteExperiences}
+            isLoading={isFavoritesLoading}
           />
         )}
 
@@ -161,6 +180,7 @@ export default function ClientFavorites() {
                 : "You do not have saved experiences yet."
             }
             experiences={visibleSavedExperiences}
+            isLoading={false}
           />
         )}
       </div>
@@ -184,15 +204,10 @@ function getReturnPath(state: unknown) {
 
 function getSectionExperiences(
   storedMap: Record<string, boolean>,
-  fallbackIds: string[],
 ) {
-  const selectedExperiences = experiences.filter(
+  return experiences.filter(
     (experience) => storedMap[experience.id],
   );
-
-  if (selectedExperiences.length > 0) return selectedExperiences;
-
-  return experiences.filter((experience) => fallbackIds.includes(experience.id));
 }
 
 function filterExperiences(
@@ -221,6 +236,7 @@ function FavoriteSection({
   emptyIcon: EmptyIcon,
   emptyText,
   experiences,
+  isLoading,
 }: {
   title: string;
   subtitle: string;
@@ -229,6 +245,7 @@ function FavoriteSection({
   emptyIcon: ElementType;
   emptyText: string;
   experiences: Experience[];
+  isLoading: boolean;
 }) {
   return (
     <section className="mb-8">
@@ -249,7 +266,13 @@ function FavoriteSection({
         </span>
       </div>
 
-      {experiences.length > 0 ? (
+      {isLoading ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <ExperienceCardSkeleton key={index} variant="grid" />
+          ))}
+        </div>
+      ) : experiences.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {experiences.map((experience) => (
             <Link

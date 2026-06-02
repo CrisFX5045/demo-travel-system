@@ -11,9 +11,11 @@ import { clientLanguages, useClientI18n } from "../i18n";
 export function DesktopSidebar({
   isOpen,
   items,
+  isAuthenticated,
 }: {
   isOpen: boolean;
   items: string[];
+  isAuthenticated: boolean;
 }) {
   const { language, setLanguage, t, text } = useClientI18n();
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
@@ -48,7 +50,7 @@ export function DesktopSidebar({
       }`}
     >
       {items.map((item, index) => {
-        const href = getSidebarHref(item, index);
+        const href = getSidebarHref(item, index, isAuthenticated);
         const className = `mb-1 flex items-center gap-4 px-4 py-3 text-base font-bold ${
           index === 0
             ? "border-l-4 border-gray-950 bg-gray-100"
@@ -140,9 +142,11 @@ export function DesktopSidebar({
   );
 }
 
-function getSidebarHref(item: string, index: number) {
+function getSidebarHref(item: string, index: number, isAuthenticated: boolean) {
   if (index === 0) return "#home";
-  if (item === "Favoritos") return "/client/favorites";
+  if (item === "Favoritos") {
+    return isAuthenticated ? "/client/favorites" : "/client/login";
+  }
   if (item === "Registrate") return "/client/signup";
   if (item === "Iniciar sesion") return "/client/login";
   return "#";

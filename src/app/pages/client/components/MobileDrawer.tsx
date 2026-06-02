@@ -1,11 +1,13 @@
 import {
   CheckIcon,
   ChevronDownIcon,
+  ArrowRightOnRectangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import { authApi } from "@/app/api/services";
 import type { ClientNavItem } from "../content";
 import { clientLanguages, useClientI18n } from "../i18n";
 
@@ -14,6 +16,7 @@ export function MobileDrawer({
   navItems,
   provinces,
   selectedProvince,
+  isAuthenticated,
   onSelectProvince,
   onClose,
 }: {
@@ -21,6 +24,7 @@ export function MobileDrawer({
   navItems: ClientNavItem[];
   provinces: string[];
   selectedProvince: string;
+  isAuthenticated: boolean;
   onSelectProvince: (province: string) => void;
   onClose: () => void;
 }) {
@@ -47,6 +51,12 @@ export function MobileDrawer({
 
     const params = new URLSearchParams({ location: province });
     navigate(`/client/search?${params.toString()}`);
+  };
+
+  const logoutClient = async () => {
+    await authApi.logoutClient();
+    onClose();
+    navigate("/client");
   };
 
   useEffect(() => {
@@ -199,22 +209,39 @@ export function MobileDrawer({
           })}
         </nav>
 
-        <div className="mt-6 border-t border-gray-100 pt-5">
-          <Link
-            to="/login"
-            onClick={onClose}
-            className="block rounded-full bg-gray-950 px-5 py-3 text-center text-sm font-extrabold text-white"
-          >
-            {t("companyLogin")}
-          </Link>
-          <Link
-            to="/client/login"
-            onClick={onClose}
-            className="mt-3 block rounded-full bg-gray-100 px-5 py-3 text-center text-sm font-extrabold text-gray-950"
-          >
-            {t("signIn")}
-          </Link>
-        </div>
+        {isAuthenticated && (
+          <div className="mt-3 border-t border-gray-100 pt-3">
+            <button
+              type="button"
+              onClick={() => {
+                void logoutClient();
+              }}
+              className="flex w-full items-center gap-4 rounded-2xl px-4 py-3 text-base font-extrabold text-red-600 hover:bg-red-50"
+            >
+              <ArrowRightOnRectangleIcon className="size-6" />
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+
+        {!isAuthenticated && (
+          <div className="mt-6 border-t border-gray-100 pt-5">
+            <Link
+              to="/login"
+              onClick={onClose}
+              className="block rounded-full bg-gray-950 px-5 py-3 text-center text-sm font-extrabold text-white"
+            >
+              {t("companyLogin")}
+            </Link>
+            <Link
+              to="/client/login"
+              onClick={onClose}
+              className="mt-3 block rounded-full bg-gray-100 px-5 py-3 text-center text-sm font-extrabold text-gray-950"
+            >
+              {t("signIn")}
+            </Link>
+          </div>
+        )}
 
         <div
           ref={languagePickerRef}

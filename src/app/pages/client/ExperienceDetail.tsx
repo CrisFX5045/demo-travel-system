@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import { FaBusAlt } from "react-icons/fa";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 
+import { hasClientAccessToken } from "@/app/api/session";
 import { experiences } from "@/app/data/tourism";
 
 import {
@@ -45,9 +46,19 @@ export default function ClientExperienceDetail() {
   const promotion = experience?.promotion;
   const pickupStops = experience?.transport?.pickupStops;
   const promotionPrice = experience ? getPromotionPrice(experience) : null;
+  const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
 
   const leaveExperience = () => {
     navigate(returnTo);
+  };
+
+  const requireAuth = (action: () => void) => {
+    if (!isAuthenticated) {
+      navigate("/client/login");
+      return;
+    }
+
+    action();
   };
 
   if (!experience) {
@@ -229,6 +240,8 @@ export default function ClientExperienceDetail() {
           onToggleLiked={() => toggleLiked(experience.id)}
           onToggleSaved={() => toggleSaved(experience.id)}
           onShare={() => setIsShareOpen(true)}
+          onRequestBooking={() => requireAuth(() => undefined)}
+          onContactCompany={() => requireAuth(() => undefined)}
         />
       </section>
 
@@ -258,7 +271,11 @@ export default function ClientExperienceDetail() {
               )}
             </div>
           </div>
-          <button className="rounded-full bg-gray-950 px-6 py-3 text-sm font-extrabold text-white transition-transform duration-150 active:scale-[0.97]">
+          <button
+            type="button"
+            onClick={() => requireAuth(() => undefined)}
+            className="rounded-full bg-gray-950 px-6 py-3 text-sm font-extrabold text-white transition-transform duration-150 active:scale-[0.97]"
+          >
             {t("request")}
           </button>
         </div>

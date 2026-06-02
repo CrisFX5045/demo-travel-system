@@ -5,9 +5,16 @@ import {
 import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 
+import { useApiResource } from "@/app/api/hooks";
+import { publicApi } from "@/app/api/services";
 import { experiences } from "@/app/data/tourism";
 
-import { CategoryTabs, CompanyTourBlock, ExperienceCard } from "./components";
+import {
+  CategoryTabs,
+  CompanyTourBlock,
+  ExperienceCard,
+  ExperienceCardSkeleton,
+} from "./components";
 import { groupExperiencesByCompany } from "./company";
 import { tabs } from "./content";
 import { useFeedReactions } from "./feed/hooks/useFeedReactions";
@@ -27,6 +34,12 @@ export default function ClientExplore() {
   const province = searchParams.get("province") ?? "";
   const tag = searchParams.get("tag") ?? "";
   const view = searchParams.get("view") ?? "";
+  const {
+    data: apiExperiences,
+    isLoading: isExperiencesLoading,
+  } = useApiResource(() => publicApi.getExperiences(), []);
+  const sourceExperiences =
+    apiExperiences && apiExperiences.length > 0 ? apiExperiences : experiences;
 
   const handleSelectType = (nextType: string) => {
     const nextParams = new URLSearchParams(searchParams);
@@ -37,7 +50,7 @@ export default function ClientExplore() {
   const filteredExperiences = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return experiences.filter((experience) => {
+    return sourceExperiences.filter((experience) => {
       const matchesType = getTypeCategories(type).includes(
         experience.category,
       );
@@ -74,7 +87,7 @@ export default function ClientExplore() {
         matchesFilter
       );
     });
-  }, [category, filter, province, query, tag, type]);
+  }, [category, filter, province, query, sourceExperiences, tag, type]);
   const companyGroups = useMemo(
     () => groupExperiencesByCompany(filteredExperiences),
     [filteredExperiences],
@@ -130,7 +143,13 @@ export default function ClientExplore() {
           />
         </div>
 
-        {filteredExperiences.length > 0 ? (
+        {isExperiencesLoading ? (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <ExperienceCardSkeleton key={index} variant="grid" />
+            ))}
+          </div>
+        ) : filteredExperiences.length > 0 ? (
           isCompanyView ? (
             <div className="divide-y divide-gray-100">
               {companyGroups.map((group) => (

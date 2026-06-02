@@ -22,6 +22,8 @@ export function BookingCard({
   onToggleLiked,
   onToggleSaved,
   onShare,
+  onRequestBooking,
+  onContactCompany,
 }: {
   price: string;
   promotionPrice: ReturnType<typeof getPromotionPrice>;
@@ -37,6 +39,8 @@ export function BookingCard({
   onToggleLiked: () => void;
   onToggleSaved: () => void;
   onShare: () => void;
+  onRequestBooking: () => void;
+  onContactCompany: () => void;
 }) {
   const { t } = useClientI18n();
 
@@ -92,10 +96,18 @@ export function BookingCard({
           />
         </div>
       </div>
-      <button className="mt-5 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.97]">
+      <button
+        type="button"
+        onClick={onRequestBooking}
+        className="mt-5 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.97]"
+      >
         {t("requestBooking")}
       </button>
-      <button className="mt-3 w-full rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-200 active:scale-[0.97]">
+      <button
+        type="button"
+        onClick={onContactCompany}
+        className="mt-3 w-full rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-200 active:scale-[0.97]"
+      >
         {t("contactCompany")}
       </button>
       <button
