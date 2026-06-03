@@ -118,10 +118,10 @@ export function ClientHeader({
             <span className="size-8" aria-hidden="true" />
           ) : (
             <Link
-              to="/login"
-              className="rounded-full bg-gray-950 px-3.5 py-2 text-xs font-bold text-white"
+              to="/client/login"
+              className="rounded-full bg-gray-950 px-3.5 py-2 text-xs font-bold text-white transition hover:bg-gray-800 active:scale-[0.98]"
             >
-              {t("companies")}
+              {t("signIn")}
             </Link>
           )}
         </div>

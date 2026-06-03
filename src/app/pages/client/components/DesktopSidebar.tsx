@@ -213,11 +213,11 @@ export function DesktopSidebar({
         {!isAuthenticated && (
           <div className="mt-6 border-t border-gray-100 pt-5">
             <Link
-              to="/login"
+              to="/client/signup"
               onClick={onClose}
               className="block cursor-pointer rounded-full bg-gray-950 px-5 py-3 text-center text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.98]"
             >
-              {t("companyLogin")}
+              {t("signUp")}
             </Link>
             <Link
               to="/client/login"
@@ -293,6 +293,19 @@ export function DesktopSidebar({
               }`}
             />
           </button>
+        </div>
+
+        <div className="mt-5 border-t border-gray-100 pt-4 text-center">
+          <Link
+            to="/login"
+            onClick={onClose}
+            className="inline-flex cursor-pointer items-center justify-center rounded-full px-3 py-1.5 text-xs font-bold text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+          >
+            {t("companyLogin")}
+          </Link>
+          <p className="mx-auto mt-2 max-w-[16rem] text-[0.68rem] font-medium leading-4 text-gray-400">
+            {t("companyAccessHint")}
+          </p>
         </div>
       </aside>
     </div>

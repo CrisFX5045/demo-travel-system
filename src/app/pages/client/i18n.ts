@@ -40,6 +40,8 @@ const clientTranslations = {
     signUp: "Regístrate",
     signIn: "Iniciar sesión",
     companyLogin: "Entrar como empresa",
+    companyAccessHint:
+      "Si representas una empresa turistica, usa este enlace para ingresar. Si necesitas acceso al sistema, contactanos para habilitar tu cuenta.",
     companies: "Empresas",
     language: "Idioma",
     exploringIn: "Explorando en",
@@ -195,6 +197,8 @@ const clientTranslations = {
     signUp: "Sign up",
     signIn: "Log in",
     companyLogin: "Business login",
+    companyAccessHint:
+      "If you represent a tourism company, use this link to sign in. If you need system access, contact us so we can enable your account.",
     companies: "Companies",
     language: "Language",
     exploringIn: "Exploring in",
