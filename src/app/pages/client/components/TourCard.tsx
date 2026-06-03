@@ -41,8 +41,8 @@ export function TourCard({
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
-          className="absolute right-2.5 top-2.5 bg-black/25 text-white backdrop-blur md:right-3 md:top-3 md:size-10"
-          iconClassName={`md:size-7 ${isLiked ? "text-rose-500" : ""}`}
+          className="absolute right-2.5 top-2.5 bg-black/25 text-white backdrop-blur md:right-3 md:top-3 md:size-9"
+          iconClassName={`md:size-6 ${isLiked ? "text-rose-500" : ""}`}
         />
         <TransportPickupBadge
           pickupStops={experience?.transport?.pickupStops}
@@ -52,19 +52,19 @@ export function TourCard({
       <Link
         to={getExperiencePath(tour.id)}
         state={{ from: "/client" }}
-        className="mt-2.5 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700 md:mt-3 md:text-xl"
+        className="mt-2.5 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700 md:mt-3 md:text-lg"
       >
         {tour.title}
       </Link>
-      <p className="truncate text-sm font-bold text-gray-700 md:text-base">
+      <p className="truncate text-sm font-bold text-gray-700">
         {tour.location}
       </p>
-      <p className="truncate text-sm text-gray-500 md:text-base">
+      <p className="truncate text-sm text-gray-500">
         {language === "es"
           ? tour.price
           : tour.price.replace("Desde", "From").replace("por persona", "per person")}
       </p>
-      <p className="flex items-center gap-1 text-sm font-semibold md:text-base">
+      <p className="flex items-center gap-1 text-sm font-semibold">
         <StarIcon className="size-3.5 fill-gray-950 md:size-4" />
         {tour.rating}
       </p>

@@ -185,7 +185,7 @@ export default function ClientHome() {
             title={text(sectionTitle)}
               to="/client/explore?type=Tours&tag=Jaco"
             />
-            <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+            <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-[repeat(auto-fill,minmax(10.5rem,12rem))] md:justify-start md:gap-5 md:overflow-visible xl:grid-cols-[repeat(auto-fill,minmax(11rem,12.5rem))] [&::-webkit-scrollbar]:hidden">
               {isExperiencesLoading ? (
                 <HorizontalExperienceSkeletons />
               ) : popularTours.map((tour) => (
@@ -206,7 +206,7 @@ export default function ClientHome() {
             subtitle={t("recommendedSubtitle")}
             to={`/client/explore?type=${encodeURIComponent(activeClientType)}`}
           />
-          <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-3 md:gap-5 md:overflow-visible lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+          <div className="flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:none] md:grid md:grid-cols-[repeat(auto-fill,minmax(10.5rem,12rem))] md:justify-start md:gap-5 md:overflow-visible xl:grid-cols-[repeat(auto-fill,minmax(11rem,12.5rem))] [&::-webkit-scrollbar]:hidden">
             {isExperiencesLoading ? (
               <HorizontalExperienceSkeletons />
             ) : visibleExperiences.map((experience) => (

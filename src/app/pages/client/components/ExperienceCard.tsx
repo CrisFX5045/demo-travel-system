@@ -51,8 +51,8 @@ export function ExperienceCard({
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
-          className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950 md:right-3 md:top-3 md:size-10"
-          iconClassName="md:size-7"
+          className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950 md:right-3 md:top-3 md:size-9"
+          iconClassName="md:size-6"
         />
         <TransportPickupBadge
           pickupStops={experience.transport?.pickupStops}
@@ -63,17 +63,17 @@ export function ExperienceCard({
         <Link
           to={getExperiencePath(experience.id)}
           state={{ from: returnTo }}
-          className="block cursor-pointer truncate text-base font-extrabold text-gray-950 transition hover:text-green-700 md:text-xl"
+          className="block cursor-pointer truncate text-base font-extrabold text-gray-950 transition hover:text-green-700 md:text-lg"
         >
           {experience.title}
         </Link>
-        <p className="mt-0.5 truncate text-sm font-bold text-gray-700 md:text-base">
+        <p className="mt-0.5 truncate text-sm font-bold text-gray-700">
           {experience.zone}, {experience.province}
         </p>
-        <p className="mt-0.5 truncate text-sm text-gray-500 md:text-base">
+        <p className="mt-0.5 truncate text-sm text-gray-500">
           {formatExperiencePriceLine(experience, language)}
         </p>
-        <p className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-gray-950 md:text-base">
+        <p className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-gray-950">
           <StarIcon className="size-3.5 fill-gray-950 md:size-4" />
           {experience.rating}
         </p>

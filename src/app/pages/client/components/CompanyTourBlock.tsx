@@ -66,8 +66,8 @@ export function CompanyTourBlock({
       <div
         className={
           layout === "two-columns"
-            ? "grid grid-cols-2 gap-4"
-            : "flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] md:grid md:grid-cols-3 md:overflow-visible lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+            ? "grid grid-cols-2 gap-4 md:grid-cols-[repeat(auto-fill,minmax(10.5rem,12rem))] md:justify-start md:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(11rem,12.5rem))]"
+            : "flex max-w-full gap-4 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] md:grid md:grid-cols-[repeat(auto-fill,minmax(10.5rem,12rem))] md:justify-start md:gap-5 md:overflow-visible xl:grid-cols-[repeat(auto-fill,minmax(11rem,12.5rem))] [&::-webkit-scrollbar]:hidden"
         }
       >
         {group.experiences.map((experience) => (
@@ -123,7 +123,8 @@ function CompanyExperienceCard({
         <LikeToggleButton
           isLiked={isLiked}
           onToggleLiked={onToggleLiked}
-          className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950"
+          className="absolute right-2.5 top-2.5 bg-white/90 text-gray-950 md:right-3 md:top-3 md:size-9"
+          iconClassName="md:size-6"
         />
         <TransportPickupBadge
           pickupStops={experience.transport?.pickupStops}
@@ -133,7 +134,7 @@ function CompanyExperienceCard({
       <Link
         to={getExperiencePath(experience.id)}
         state={{ from: returnTo }}
-        className="mt-2 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700"
+        className="mt-2 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700 md:text-lg"
       >
         {experience.title}
       </Link>
