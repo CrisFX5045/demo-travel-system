@@ -15,6 +15,7 @@ import {
   CategoryRail,
   CategoryTabs,
   ClientHeader,
+  ClientAuthPrompt,
   CompanyTourBlock,
   DesktopSidebar,
   ExperienceCard,
@@ -29,7 +30,6 @@ import {
 } from "./components";
 import {
   categoryTiles,
-  desktopSidebarItems,
   filterPills,
   navItems,
   tabs,
@@ -40,19 +40,18 @@ import { useFeedReactions } from "./feed/hooks/useFeedReactions";
 import { useScrollChrome } from "./hooks/useScrollChrome";
 import { useClientI18n } from "./i18n";
 
+const desktopMediaQuery = "(min-width: 1024px)";
+
 export default function ClientHome() {
   const navigate = useNavigate();
-  const [isMenuOpen, setIsMenuOpen] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(min-width: 1280px)").matches,
-  );
+  const [isMenuOpen, setIsMenuOpen] = useState(() => isDesktopViewport());
   const { isBottomNavVisible, isMobileHeaderVisible } = useScrollChrome();
   const { liked, toggleLiked } = useFeedReactions();
   const { t, text } = useClientI18n();
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => hasClientAccessToken(),
   );
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
   const [selectedProvince, setSelectedProvince] = useState<string>(
     t("anyLocation"),
   );
@@ -75,17 +74,15 @@ export default function ClientHome() {
     () => getAuthAwareNavItems(navItems, isAuthenticated),
     [isAuthenticated],
   );
-  const authAwareSidebarItems = useMemo(
-    () =>
-      isAuthenticated
-        ? desktopSidebarItems.filter(
-            (item) => item !== "Registrate" && item !== "Iniciar sesion",
-          )
-        : desktopSidebarItems,
-    [isAuthenticated],
-  );
-
   const closeMenu = () => setIsMenuOpen(false);
+  const toggleLikedWhenAllowed = (experienceId: string) => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
+      return;
+    }
+
+    toggleLiked(experienceId);
+  };
   const applyFilters = (filters: {
     type: string;
     category: string;
@@ -117,6 +114,20 @@ export default function ClientHome() {
     };
   }, []);
 
+  useEffect(() => {
+    const desktopMedia = window.matchMedia(desktopMediaQuery);
+    const syncDesktopMenu = () => {
+      setIsMenuOpen(desktopMedia.matches);
+    };
+
+    syncDesktopMenu();
+    desktopMedia.addEventListener("change", syncDesktopMenu);
+
+    return () => {
+      desktopMedia.removeEventListener("change", syncDesktopMenu);
+    };
+  }, []);
+
   return (
     <main
       id="home"
@@ -143,13 +154,17 @@ export default function ClientHome() {
 
       <DesktopSidebar
         isOpen={isMenuOpen}
-        items={authAwareSidebarItems}
+        navItems={authAwareNavItems}
+        provinces={provinces}
+        selectedProvince={selectedProvince}
         isAuthenticated={isAuthenticated}
+        onSelectProvince={setSelectedProvince}
+        onClose={closeMenu}
       />
 
       <div
-        className={`mx-auto w-full max-w-[100svw] overflow-x-hidden transition-[padding] duration-200 xl:max-w-[116rem] ${
-          isMenuOpen ? "xl:pl-64" : "xl:pl-0"
+        className={`mx-auto w-full max-w-[100svw] overflow-x-hidden transition-[padding] duration-300 ease-out xl:max-w-[116rem] ${
+          isMenuOpen ? "lg:pl-[21rem]" : "lg:pl-0"
         }`}
       >
         <CategoryTabs
@@ -178,7 +193,7 @@ export default function ClientHome() {
                   key={tour.title}
                   tour={tour}
                   isLiked={Boolean(liked[tour.id])}
-                  onToggleLiked={() => toggleLiked(tour.id)}
+                  onToggleLiked={() => toggleLikedWhenAllowed(tour.id)}
                 />
               ))}
             </div>
@@ -199,7 +214,7 @@ export default function ClientHome() {
                 key={experience.id}
                 experience={experience}
                 isLiked={Boolean(liked[experience.id])}
-                onToggleLiked={() => toggleLiked(experience.id)}
+                onToggleLiked={() => toggleLikedWhenAllowed(experience.id)}
               />
             ))}
           </div>
@@ -218,7 +233,7 @@ export default function ClientHome() {
                 key={group.company}
                 group={group}
                 liked={liked}
-                onToggleLiked={toggleLiked}
+                onToggleLiked={toggleLikedWhenAllowed}
                 returnTo="/client"
               />
             ))}
@@ -241,7 +256,18 @@ export default function ClientHome() {
         onClose={() => setIsFilterSheetOpen(false)}
         onApply={applyFilters}
       />
+      <ClientAuthPrompt
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
+      />
     </main>
+  );
+}
+
+function isDesktopViewport() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia(desktopMediaQuery).matches
   );
 }
 

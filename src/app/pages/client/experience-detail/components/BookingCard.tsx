@@ -99,21 +99,21 @@ export function BookingCard({
       <button
         type="button"
         onClick={onRequestBooking}
-        className="mt-5 w-full rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.97]"
+        className="mt-5 w-full cursor-pointer rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.97]"
       >
         {t("requestBooking")}
       </button>
       <button
         type="button"
         onClick={onContactCompany}
-        className="mt-3 w-full rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-200 active:scale-[0.97]"
+        className="mt-3 w-full cursor-pointer rounded-full bg-gray-100 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-200 active:scale-[0.97]"
       >
         {t("contactCompany")}
       </button>
       <button
         type="button"
         onClick={onShare}
-        className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-50 active:scale-[0.97]"
+        className="mt-3 flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-3 text-sm font-extrabold transition hover:bg-gray-50 active:scale-[0.97]"
       >
         <ShareIcon className="size-5" />
         {t("share")}
@@ -143,7 +143,7 @@ function CardAction({
     <button
       type="button"
       onClick={onClick}
-      className="grid size-10 place-items-center rounded-full bg-gray-100 transition hover:bg-gray-200 active:scale-90"
+      className="grid size-10 cursor-pointer place-items-center rounded-full bg-gray-100 transition hover:bg-gray-200 active:scale-90"
       aria-label={label}
     >
       <DisplayIcon

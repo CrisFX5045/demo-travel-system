@@ -37,7 +37,10 @@ export function CompanyTourBlock({
     <section className="w-full max-w-full min-w-0 py-5">
       {showCompanyHeader && (
         <div className="mb-3 flex items-center justify-between gap-4">
-          <Link to={getCompanyPath(group.company)} className="min-w-0 flex-1">
+          <Link
+            to={getCompanyPath(group.company)}
+            className="min-w-0 flex-1 cursor-pointer transition hover:text-green-700"
+          >
             <p className="text-xs font-bold uppercase text-gray-500">
               {t("verifiedTourCompany")}
             </p>
@@ -52,7 +55,7 @@ export function CompanyTourBlock({
           </Link>
           <Link
             to={getCompanyPath(group.company)}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-gray-100"
+            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full bg-gray-100 transition hover:bg-gray-200 active:scale-95"
             aria-label={`${t("viewCompanyTours")} ${group.company}`}
           >
             <ArrowRightIcon className="size-5" />
@@ -105,16 +108,16 @@ function CompanyExperienceCard({
           : "w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none"
       }
     >
-      <div className="relative rounded-2xl bg-gray-100">
+      <div className="relative rounded-2xl bg-gray-100 transition duration-200 md:hover:-translate-y-0.5 md:hover:shadow-lg md:hover:shadow-gray-950/10">
         <Link
           to={getExperiencePath(experience.id)}
           state={{ from: returnTo }}
-          className="block overflow-hidden rounded-2xl"
+          className="group block cursor-pointer overflow-hidden rounded-2xl"
         >
           <img
             src={experience.image}
             alt=""
-            className="aspect-[1.04] w-full object-cover"
+            className="aspect-[1.04] w-full object-cover transition duration-500 md:group-hover:scale-105"
           />
         </Link>
         <LikeToggleButton
@@ -130,7 +133,7 @@ function CompanyExperienceCard({
       <Link
         to={getExperiencePath(experience.id)}
         state={{ from: returnTo }}
-        className="mt-2 block truncate text-base font-extrabold"
+        className="mt-2 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700"
       >
         {experience.title}
       </Link>

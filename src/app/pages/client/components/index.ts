@@ -1,6 +1,7 @@
 export { BottomNav } from "./BottomNav";
 export { CategoryRail } from "./CategoryRail";
 export { CategoryTabs } from "./CategoryTabs";
+export { ClientAuthPrompt } from "./ClientAuthPrompt";
 export { ClientHeader } from "./ClientHeader";
 export {
   BookingCardSkeleton,

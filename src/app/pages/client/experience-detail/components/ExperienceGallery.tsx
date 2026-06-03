@@ -120,7 +120,7 @@ export function ExperienceGallery({
             <button
               type="button"
               onClick={() => goToImage("previous")}
-              className="absolute left-3 top-1/2 z-20 hidden size-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25 active:scale-90 md:grid"
+              className="absolute left-3 top-1/2 z-20 hidden size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25 active:scale-90 md:grid"
               aria-label={t("previousImage")}
             >
               <ChevronLeftIcon className="size-6" />
@@ -128,7 +128,7 @@ export function ExperienceGallery({
             <button
               type="button"
               onClick={() => goToImage("next")}
-              className="absolute right-3 top-1/2 z-20 hidden size-11 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25 active:scale-90 md:grid"
+              className="absolute right-3 top-1/2 z-20 hidden size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-white/25 active:scale-90 md:grid"
               aria-label={t("nextImage")}
             >
               <ChevronRightIcon className="size-6" />
@@ -174,7 +174,7 @@ export function ExperienceGallery({
                 key={image}
                 type="button"
                 onClick={() => setActiveIndex(index)}
-                className={`h-16 w-24 overflow-hidden rounded-xl border-2 transition active:scale-95 ${
+                className={`h-16 w-24 cursor-pointer overflow-hidden rounded-xl border-2 transition hover:opacity-100 active:scale-95 ${
                   index === activeIndex
                     ? "border-white opacity-100"
                     : "border-white/20 opacity-65"
@@ -266,7 +266,7 @@ function ExpandedGallery({
       <button
         type="button"
         onClick={closeGallery}
-        className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-20 grid size-11 place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
+        className="absolute right-4 top-[calc(1rem+env(safe-area-inset-top))] z-20 grid size-11 cursor-pointer place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
         aria-label={t("closeGallery")}
       >
         <XMarkIcon className="size-6" />
@@ -313,7 +313,7 @@ function ExpandedGallery({
           <button
             type="button"
             onClick={() => goToImage("previous")}
-            className="absolute left-4 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
+            className="absolute left-4 top-1/2 z-20 grid size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
             aria-label={t("previousImage")}
           >
             <ChevronLeftIcon className="size-6" />
@@ -321,7 +321,7 @@ function ExpandedGallery({
           <button
             type="button"
             onClick={() => goToImage("next")}
-            className="absolute right-4 top-1/2 z-20 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
+            className="absolute right-4 top-1/2 z-20 grid size-11 -translate-y-1/2 cursor-pointer place-items-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 active:scale-90"
             aria-label={t("nextImage")}
           >
             <ChevronRightIcon className="size-6" />
@@ -333,7 +333,7 @@ function ExpandedGallery({
                 key={image}
                 type="button"
                 onClick={() => onChange(index)}
-                className={`h-14 w-20 overflow-hidden rounded-xl border-2 transition active:scale-95 md:h-16 md:w-24 ${
+                className={`h-14 w-20 cursor-pointer overflow-hidden rounded-xl border-2 transition hover:opacity-100 active:scale-95 md:h-16 md:w-24 ${
                   index === activeIndex
                     ? "border-white opacity-100"
                     : "border-white/20 opacity-60"
@@ -371,7 +371,7 @@ function GalleryAction({
     <button
       type="button"
       onClick={onClick}
-      className="grid size-11 place-items-center rounded-full bg-black/35 text-white backdrop-blur transition hover:bg-black/50 active:scale-90"
+      className="grid size-11 cursor-pointer place-items-center rounded-full bg-black/35 text-white backdrop-blur transition hover:bg-black/50 active:scale-90"
       aria-label={label}
     >
       <DisplayIcon

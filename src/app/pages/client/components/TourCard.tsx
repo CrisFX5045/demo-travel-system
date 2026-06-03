@@ -23,16 +23,16 @@ export function TourCard({
 
   return (
     <article className="w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none">
-      <div className="relative rounded-[1.15rem] bg-gray-100 md:rounded-[1.35rem]">
+      <div className="relative rounded-[1.15rem] bg-gray-100 transition duration-200 md:rounded-[1.35rem] md:hover:-translate-y-0.5 md:hover:shadow-lg md:hover:shadow-gray-950/10">
         <Link
           to={getExperiencePath(tour.id)}
           state={{ from: "/client" }}
-          className="block overflow-hidden rounded-[1.15rem] md:rounded-[1.35rem]"
+          className="group block cursor-pointer overflow-hidden rounded-[1.15rem] md:rounded-[1.35rem]"
         >
           <img
             src={tour.image}
             alt=""
-            className="aspect-[1.04] w-full object-cover"
+            className="aspect-[1.04] w-full object-cover transition duration-500 md:group-hover:scale-105"
           />
           <div className="absolute left-2.5 top-2.5 max-w-[72%] rounded-2xl bg-white/90 px-2.5 py-1.5 text-xs font-extrabold leading-tight shadow-sm md:left-3 md:top-3 md:px-3 md:py-2 md:text-sm">
             {t("favoriteAmongTravelers")}
@@ -52,7 +52,7 @@ export function TourCard({
       <Link
         to={getExperiencePath(tour.id)}
         state={{ from: "/client" }}
-        className="mt-2.5 block truncate text-base font-extrabold md:mt-3 md:text-xl"
+        className="mt-2.5 block cursor-pointer truncate text-base font-extrabold transition hover:text-green-700 md:mt-3 md:text-xl"
       >
         {tour.title}
       </Link>

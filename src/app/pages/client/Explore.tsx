@@ -6,11 +6,13 @@ import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
 
 import { useApiResource } from "@/app/api/hooks";
+import { hasClientAccessToken } from "@/app/api/session";
 import { publicApi } from "@/app/api/services";
 import { experiences } from "@/app/data/tourism";
 
 import {
   CategoryTabs,
+  ClientAuthPrompt,
   CompanyTourBlock,
   ExperienceCard,
   ExperienceCardSkeleton,
@@ -28,6 +30,8 @@ export default function ClientExplore() {
   const [query, setQuery] = useState(initialQuery);
   const { liked, toggleLiked } = useFeedReactions();
   const { t, text } = useClientI18n();
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
+  const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
   const type = searchParams.get("type") ?? "Tours";
   const category = searchParams.get("category") ?? "";
   const filter = searchParams.get("filter") ?? "";
@@ -99,6 +103,14 @@ export default function ClientExplore() {
       ? t("companiesWithTours")
       : category || tag || filter || type;
   const returnTo = `${location.pathname}${location.search}`;
+  const toggleLikedWhenAllowed = (experienceId: string) => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
+      return;
+    }
+
+    toggleLiked(experienceId);
+  };
 
   return (
     <main className="min-h-screen w-full max-w-[100svw] overflow-x-hidden bg-white pb-10 text-gray-950">
@@ -157,7 +169,7 @@ export default function ClientExplore() {
                   key={group.company}
                   group={group}
                   liked={liked}
-                  onToggleLiked={toggleLiked}
+                  onToggleLiked={toggleLikedWhenAllowed}
                   returnTo={returnTo}
                 />
               ))}
@@ -169,7 +181,7 @@ export default function ClientExplore() {
                   key={experience.id}
                   experience={experience}
                   isLiked={Boolean(liked[experience.id])}
-                  onToggleLiked={() => toggleLiked(experience.id)}
+                  onToggleLiked={() => toggleLikedWhenAllowed(experience.id)}
                   variant="grid"
                   returnTo={returnTo}
                 />
@@ -193,6 +205,10 @@ export default function ClientExplore() {
           </section>
         )}
       </div>
+      <ClientAuthPrompt
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
+      />
     </main>
   );
 }

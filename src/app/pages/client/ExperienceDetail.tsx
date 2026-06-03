@@ -12,6 +12,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { hasClientAccessToken } from "@/app/api/session";
 import { experiences } from "@/app/data/tourism";
 
+import { ClientAuthPrompt } from "./components";
 import {
   BookingCard,
   ExperienceEntryAnimation,
@@ -36,6 +37,7 @@ export default function ClientExperienceDetail() {
   const { isMobileHeaderVisible } = useScrollChrome();
   const { t, language, text } = useClientI18n();
   const [isShareOpen, setIsShareOpen] = useState(false);
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
   const galleryImages = useMemo(() => {
     if (!experience) return [];
 
@@ -55,6 +57,14 @@ export default function ClientExperienceDetail() {
   const requireAuth = (action: () => void) => {
     if (!isAuthenticated) {
       navigate("/client/login");
+      return;
+    }
+
+    action();
+  };
+  const runReactionWhenAllowed = (action: () => void) => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
       return;
     }
 
@@ -93,8 +103,12 @@ export default function ClientExperienceDetail() {
           title={experience.title}
           isLiked={isLiked}
           isSaved={isSaved}
-          onToggleLiked={() => toggleLiked(experience.id)}
-          onToggleSaved={() => toggleSaved(experience.id)}
+          onToggleLiked={() =>
+            runReactionWhenAllowed(() => toggleLiked(experience.id))
+          }
+          onToggleSaved={() =>
+            runReactionWhenAllowed(() => toggleSaved(experience.id))
+          }
           onShare={() => setIsShareOpen(true)}
         />
         <div
@@ -237,8 +251,12 @@ export default function ClientExperienceDetail() {
           nextSlot={experience.nextSlot}
           isLiked={isLiked}
           isSaved={isSaved}
-          onToggleLiked={() => toggleLiked(experience.id)}
-          onToggleSaved={() => toggleSaved(experience.id)}
+          onToggleLiked={() =>
+            runReactionWhenAllowed(() => toggleLiked(experience.id))
+          }
+          onToggleSaved={() =>
+            runReactionWhenAllowed(() => toggleSaved(experience.id))
+          }
           onShare={() => setIsShareOpen(true)}
           onRequestBooking={() => requireAuth(() => undefined)}
           onContactCompany={() => requireAuth(() => undefined)}
@@ -285,6 +303,10 @@ export default function ClientExperienceDetail() {
         experience={experience}
         isOpen={isShareOpen}
         onClose={() => setIsShareOpen(false)}
+      />
+      <ClientAuthPrompt
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
       />
     </main>
   );

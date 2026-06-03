@@ -29,7 +29,9 @@ export function FeedActionButton({
     <button
       onClick={onClick}
       className={`flex flex-col items-center gap-1 ${
-        pressable ? "transition-transform duration-100 active:scale-[0.98]" : ""
+        pressable
+          ? "cursor-pointer transition-transform duration-100 hover:scale-105 active:scale-[0.98]"
+          : "cursor-default"
       }`}
     >
       <span

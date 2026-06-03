@@ -26,7 +26,7 @@ export function LikeToggleButton({
           setPulseKey((current) => current + 1);
           onToggleLiked();
         }}
-        className={`grid size-9 place-items-center rounded-full shadow-sm transition-transform duration-100 active:scale-[0.98] ${className}`}
+        className={`grid size-9 cursor-pointer place-items-center rounded-full shadow-sm transition duration-150 hover:scale-105 hover:shadow-md active:scale-[0.98] ${className}`}
         aria-label={isLiked ? "Quitar de favoritos" : "Agregar a favoritos"}
       >
         <HeartIcon

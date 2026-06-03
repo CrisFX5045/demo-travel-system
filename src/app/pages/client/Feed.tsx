@@ -1,5 +1,11 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
+import {
+  CLIENT_SESSION_EVENT,
+  hasClientAccessToken,
+} from "@/app/api/session";
+import { ClientAuthPrompt } from "./components";
 import { FeedHeader, FeedViewport } from "./feed/components";
 import { useFeedReactions } from "./feed/hooks/useFeedReactions";
 import { useFeedWindow } from "./feed/hooks/useFeedWindow";
@@ -10,6 +16,10 @@ export default function ClientFeed() {
   const initialExperienceId = searchParams.get("experience");
   const selectedProvince = searchParams.get("province") ?? "";
   const { liked, saved, toggleLiked, toggleSaved } = useFeedReactions();
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => hasClientAccessToken(),
+  );
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
   const {
     feedItems,
     isLoadingMore,
@@ -20,6 +30,26 @@ export default function ClientFeed() {
   const leaveFeed = () => {
     navigate("/client");
   };
+  const runReactionWhenAllowed = (action: () => void) => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
+      return;
+    }
+
+    action();
+  };
+
+  useEffect(() => {
+    const syncAuthStatus = () => {
+      setIsAuthenticated(hasClientAccessToken());
+    };
+
+    window.addEventListener(CLIENT_SESSION_EVENT, syncAuthStatus);
+
+    return () => {
+      window.removeEventListener(CLIENT_SESSION_EVENT, syncAuthStatus);
+    };
+  }, []);
 
   return (
     <main
@@ -51,8 +81,16 @@ export default function ClientFeed() {
         trimmedBefore={trimmedBefore}
         saved={saved}
         onActiveIndexChange={handleActiveIndexChange}
-        onToggleLiked={toggleLiked}
-        onToggleSaved={toggleSaved}
+        onToggleLiked={(experienceId) =>
+          runReactionWhenAllowed(() => toggleLiked(experienceId))
+        }
+        onToggleSaved={(experienceId) =>
+          runReactionWhenAllowed(() => toggleSaved(experienceId))
+        }
+      />
+      <ClientAuthPrompt
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
       />
     </main>
   );

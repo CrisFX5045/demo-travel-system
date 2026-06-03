@@ -36,7 +36,7 @@ export function FeedActions({
 
   return (
     <>
-      <div className="absolute right-3 top-[32%] z-30 flex flex-col items-center gap-5 lg:-right-20">
+      <div className="absolute right-3 top-[32%] z-30 flex flex-col items-center gap-5 lg:right-5">
         <FeedActionButton
           icon={HeartOutlineIcon}
           activeIcon={HeartSolidIcon}

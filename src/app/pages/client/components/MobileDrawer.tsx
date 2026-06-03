@@ -89,6 +89,12 @@ export function MobileDrawer({
 
   useEffect(() => {
     if (!isOpen) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 1024px)").matches
+    ) {
+      return;
+    }
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";

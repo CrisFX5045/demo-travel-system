@@ -7,9 +7,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router";
 
+import { hasClientAccessToken } from "@/app/api/session";
 import { experiences } from "@/app/data/tourism";
 
-import { ExperienceCard } from "./components";
+import { ClientAuthPrompt, ExperienceCard } from "./components";
 import { categoryTiles, filterPills } from "./content";
 import { useFeedReactions } from "./feed/hooks/useFeedReactions";
 import { useClientI18n } from "./i18n";
@@ -95,12 +96,14 @@ export default function ClientSearch() {
       getTodayInputValue(),
   );
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isAuthPromptOpen, setIsAuthPromptOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>(() =>
     readRecentSearches(),
   );
   const inputRef = useRef<HTMLInputElement | null>(null);
   const { liked, toggleLiked } = useFeedReactions();
   const { t, text, language } = useClientI18n();
+  const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
   const hasActiveSearchCriteria =
     submittedQuery.trim().length > 0 ||
     activeFilters.length > 0 ||
@@ -120,7 +123,11 @@ export default function ClientSearch() {
   const returnTo = `${location.pathname}${location.search}`;
 
   useEffect(() => {
-    inputRef.current?.focus();
+    const focusTimer = window.setTimeout(() => {
+      inputRef.current?.focus();
+    }, 180);
+
+    return () => window.clearTimeout(focusTimer);
   }, []);
 
   useEffect(() => {
@@ -402,10 +409,50 @@ export default function ClientSearch() {
       isResultsMode,
     );
   };
+  const toggleLikedWhenAllowed = (experienceId: string) => {
+    if (!isAuthenticated) {
+      setIsAuthPromptOpen(true);
+      return;
+    }
+
+    toggleLiked(experienceId);
+  };
 
   return (
-    <main className="min-h-screen w-[100dvw] max-w-full overflow-x-hidden bg-[#f8f8f6] text-gray-950">
-      <header className="sticky top-0 z-30 w-[100dvw] max-w-full overflow-x-hidden border-b border-gray-100 bg-[#f8f8f6]/90 px-4 pb-3 pt-[calc(0.8rem+env(safe-area-inset-top))] backdrop-blur-xl md:px-8">
+    <main className="min-h-screen w-[100dvw] max-w-full overflow-x-hidden bg-[#f8f8f6] text-gray-950 [animation:client-search-page-in_420ms_cubic-bezier(.22,1,.36,1)_both]">
+      <style>
+        {`
+          @keyframes client-search-page-in {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes client-search-content-in {
+            from {
+              opacity: 0;
+              transform: translateY(14px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .client-search-animated {
+              animation-duration: 1ms !important;
+              animation-delay: 0ms !important;
+            }
+          }
+        `}
+      </style>
+      <header className="client-search-animated sticky top-0 z-30 w-[100dvw] max-w-full overflow-x-hidden border-b border-gray-100 bg-[#f8f8f6]/90 px-4 pb-3 pt-[calc(0.8rem+env(safe-area-inset-top))] backdrop-blur-xl [animation:client-search-content-in_480ms_80ms_cubic-bezier(.22,1,.36,1)_both] md:px-8">
         <form
           onSubmit={handleSubmit}
           className="mx-auto flex w-full max-w-full min-w-0 items-center gap-2 md:max-w-4xl"
@@ -413,7 +460,7 @@ export default function ClientSearch() {
           <button
             type="button"
             onClick={handleBack}
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-gray-100 transition active:scale-95"
+            className="grid size-10 shrink-0 cursor-pointer place-items-center rounded-full bg-gray-100 transition hover:bg-gray-200 active:scale-95"
             aria-label={t("back")}
           >
             <ArrowLeftIcon className="size-5" />
@@ -440,7 +487,7 @@ export default function ClientSearch() {
           </div>
           <button
             type="submit"
-            className="hidden rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white md:block"
+            className="hidden cursor-pointer rounded-full bg-gray-950 px-5 py-3 text-sm font-extrabold text-white transition hover:bg-gray-800 active:scale-[0.98] md:block"
           >
             {t("search")}
           </button>
@@ -478,7 +525,7 @@ export default function ClientSearch() {
         )}
       </header>
 
-      <div className="mx-auto box-border w-[100dvw] max-w-full px-2 py-5 md:max-w-4xl md:px-8">
+      <div className="client-search-animated mx-auto box-border w-[100dvw] max-w-full px-2 py-5 [animation:client-search-content-in_520ms_120ms_cubic-bezier(.22,1,.36,1)_both] md:max-w-4xl md:px-8">
         {isResultsMode ? (
           <section className="w-full min-w-0 max-w-full">
             <div className="mb-4 grid min-w-0 gap-3">
@@ -570,7 +617,7 @@ export default function ClientSearch() {
                     key={experience.id}
                     experience={experience}
                     isLiked={Boolean(liked[experience.id])}
-                    onToggleLiked={() => toggleLiked(experience.id)}
+                    onToggleLiked={() => toggleLikedWhenAllowed(experience.id)}
                     variant="grid"
                     returnTo={returnTo}
                   />
@@ -899,6 +946,10 @@ export default function ClientSearch() {
             true,
           )
         }
+      />
+      <ClientAuthPrompt
+        isOpen={isAuthPromptOpen}
+        onClose={() => setIsAuthPromptOpen(false)}
       />
     </main>
   );
