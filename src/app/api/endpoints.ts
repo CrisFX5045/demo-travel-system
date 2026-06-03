@@ -1,14 +1,25 @@
-const apiBaseUrl = requireEnv("VITE_TICA_TOUR_API_BASE_URL");
-const supabaseAuthBaseUrl = requireEnv("VITE_SUPABASE_AUTH_BASE_URL");
+const errorApiBaseUrl = "https://error.api";
+const apiBaseUrl = envOrFallback(
+  "VITE_TICA_TOUR_API_BASE_URL",
+  errorApiBaseUrl,
+);
+const supabaseAuthBaseUrl = envOrFallback(
+  "VITE_SUPABASE_AUTH_BASE_URL",
+  errorApiBaseUrl,
+);
 
-function requireEnv(name: keyof ImportMetaEnv) {
+function envOrFallback(name: keyof ImportMetaEnv, fallback: string) {
   const value = import.meta.env[name];
 
   if (typeof value === "string" && value.trim()) {
     return value;
   }
 
-  throw new Error(`Missing required environment variable: ${name}`);
+  return fallback;
+}
+
+function missingEnvPath(name: keyof ImportMetaEnv) {
+  return `/missing-env/${name}`;
 }
 
 function joinUrl(baseUrl: string, path: string) {
@@ -43,22 +54,22 @@ export const authEndpoints = {
   login: () =>
     joinUrl(
       supabaseAuthBaseUrl,
-      requireEnv("VITE_API_CLIENT_LOGIN"),
+      envOrFallback("VITE_API_CLIENT_LOGIN", missingEnvPath("VITE_API_CLIENT_LOGIN")),
     ),
   refresh: () =>
     joinUrl(
       supabaseAuthBaseUrl,
-      requireEnv("VITE_API_CLIENT_REFRESH"),
+      envOrFallback("VITE_API_CLIENT_REFRESH", missingEnvPath("VITE_API_CLIENT_REFRESH")),
     ),
   profileMe: () =>
     joinUrl(
       apiBaseUrl,
-      requireEnv("VITE_API_CLIENT_PROFILE"),
+      envOrFallback("VITE_API_CLIENT_PROFILE", missingEnvPath("VITE_API_CLIENT_PROFILE")),
     ),
   updateProfile: () => joinUrl(apiBaseUrl, "/Me/Profile"),
   registerTraveler: () =>
-    joinUrl(apiBaseUrl, requireEnv("VITE_API_CLIENT_SIGNUP")),
-  logout: () => joinUrl(apiBaseUrl, requireEnv("VITE_API_CLIENT_LOGOUT")),
+    joinUrl(apiBaseUrl, envOrFallback("VITE_API_CLIENT_SIGNUP", missingEnvPath("VITE_API_CLIENT_SIGNUP"))),
+  logout: () => joinUrl(apiBaseUrl, envOrFallback("VITE_API_CLIENT_LOGOUT", missingEnvPath("VITE_API_CLIENT_LOGOUT"))),
 };
 
 export const publicEndpoints = {
