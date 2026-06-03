@@ -1,10 +1,15 @@
-const apiBaseUrl =
-  import.meta.env.VITE_TICA_TOUR_API_BASE_URL ??
-  "https://ticatour.onrender.com/api";
+const apiBaseUrl = requireEnv("VITE_TICA_TOUR_API_BASE_URL");
+const supabaseAuthBaseUrl = requireEnv("VITE_SUPABASE_AUTH_BASE_URL");
 
-const supabaseAuthBaseUrl =
-  import.meta.env.VITE_SUPABASE_AUTH_BASE_URL ??
-  "https://svkielhokalftxdpkuwg.supabase.co/auth/v1";
+function requireEnv(name: keyof ImportMetaEnv) {
+  const value = import.meta.env[name];
+
+  if (typeof value === "string" && value.trim()) {
+    return value;
+  }
+
+  throw new Error(`Missing required environment variable: ${name}`);
+}
 
 function joinUrl(baseUrl: string, path: string) {
   if (/^https?:\/\//i.test(path)) return path;
@@ -38,23 +43,22 @@ export const authEndpoints = {
   login: () =>
     joinUrl(
       supabaseAuthBaseUrl,
-      import.meta.env.VITE_API_CLIENT_LOGIN ?? "/token?grant_type=password",
+      requireEnv("VITE_API_CLIENT_LOGIN"),
     ),
   refresh: () =>
     joinUrl(
       supabaseAuthBaseUrl,
-      import.meta.env.VITE_API_CLIENT_REFRESH ??
-        "/token?grant_type=refresh_token",
+      requireEnv("VITE_API_CLIENT_REFRESH"),
     ),
   profileMe: () =>
     joinUrl(
       apiBaseUrl,
-      import.meta.env.VITE_API_CLIENT_PROFILE ?? "/Profile/me",
+      requireEnv("VITE_API_CLIENT_PROFILE"),
     ),
   updateProfile: () => joinUrl(apiBaseUrl, "/Me/Profile"),
   registerTraveler: () =>
-    joinUrl(apiBaseUrl, import.meta.env.VITE_API_CLIENT_SIGNUP ?? "/Auth/register-traveler"),
-  logout: () => joinUrl(apiBaseUrl, import.meta.env.VITE_API_CLIENT_LOGOUT ?? "/Auth/logout"),
+    joinUrl(apiBaseUrl, requireEnv("VITE_API_CLIENT_SIGNUP")),
+  logout: () => joinUrl(apiBaseUrl, requireEnv("VITE_API_CLIENT_LOGOUT")),
 };
 
 export const publicEndpoints = {
