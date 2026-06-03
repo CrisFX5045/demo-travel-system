@@ -10,6 +10,7 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
+import { authEndpoints } from "@/app/api/endpoints";
 import { authApi } from "@/app/api/services";
 import { setClientSession } from "@/app/api/session";
 import { Page } from "@/components/shared/Page";
@@ -70,6 +71,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     useState<PreferredCurrency>("CRC");
   const copy = authCopy[mode];
   const isSignup = mode === "signup";
+  const signupApiUrl = isSignup ? authEndpoints.registerTraveler() : "";
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -195,6 +197,14 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
               </div>
 
               <div className="border-b border-gray-100 pb-5">
+                {isSignup && (
+                  <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-bold text-amber-900">
+                    <span className="block text-[0.68rem] font-black uppercase text-amber-700">
+                      API signup
+                    </span>
+                    <span className="mt-1 block break-all">{signupApiUrl}</span>
+                  </div>
+                )}
                 <h1 className="text-[2rem] font-extrabold leading-tight text-gray-950">
                   {t(copy.title)}
                 </h1>
