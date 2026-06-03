@@ -263,11 +263,11 @@ export const supportActions: Record<ClientLanguage, ProfileAction[]> = {
       description: "Preguntas frecuentes y políticas de reserva.",
       icon: LifebuoyIcon,
     },
-    {
+/*     {
       label: "Mensajes",
       description: "Conversaciones con empresas turísticas.",
       icon: ChatBubbleLeftRightIcon,
-    },
+    }, */
     {
       label: "Documentos",
       description: "Comprobantes, facturas y vouchers.",
