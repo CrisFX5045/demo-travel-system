@@ -15,6 +15,14 @@ body {
   @apply h-full bg-gray-50 font-sans text-sm leading-5 text-gray-700 antialiased [text-rendering:optimizeLegibility] dark:bg-dark-900 dark:text-dark-200 dark:[color-scheme:dark];
 }
 
+button:not(:disabled) {
+  @apply cursor-pointer;
+}
+
+button:disabled {
+  @apply cursor-not-allowed;
+}
+
 [data-card-skin="bordered"] body {
   @apply bg-white dark:bg-dark-900;
 }

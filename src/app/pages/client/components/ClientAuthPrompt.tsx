@@ -97,7 +97,7 @@ export function ClientAuthPrompt({
             onClick={goToLogin}
             className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-4 text-sm font-extrabold transition hover:border-gray-300 hover:bg-gray-50 active:scale-[0.98]"
           >
-            <img src="/images/logos/apple.svg" alt="" className="size-5" />
+            <img src="/images/logos/apple.svg" alt="" className="size-5 dark:invert" />
             <span className="truncate">{t("authContinueApple")}</span>
           </button>
         </div>

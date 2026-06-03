@@ -5,3 +5,7 @@
 .btn-base {
   @apply inline-flex cursor-pointer items-center justify-center text-center font-medium tracking-wide outline-hidden transition-all duration-200 focus:outline-hidden disabled:pointer-events-none disabled:select-none;
 }
+
+.btn-base:not(:disabled):not([data-disabled="true"]) {
+  @apply hover:brightness-[0.98] active:brightness-[0.96];
+}

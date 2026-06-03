@@ -330,7 +330,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                   <img
                     src="/images/logos/apple.svg"
                     alt=""
-                    className="size-5"
+                    className="size-5 dark:invert"
                     draggable={false}
                   />
                   {t("authContinueApple")}
