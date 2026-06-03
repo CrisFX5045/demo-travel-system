@@ -14,7 +14,7 @@ export function CategoryRail({
 
   return (
     <section className="border-b border-gray-100 px-4 py-3 md:px-8 md:py-4">
-      <div className="flex justify-between  max-w-full items-center gap-5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] md:gap-8 md:pb-2 [&::-webkit-scrollbar]:hidden">
+      <div className="flex md:justify-center max-w-full items-center gap-5 overflow-x-auto overscroll-x-contain pb-1 [scrollbar-width:none] md:gap-8 md:pb-2 [&::-webkit-scrollbar]:hidden">
         {categories.map((category) => (
           <Link
             key={category.label}

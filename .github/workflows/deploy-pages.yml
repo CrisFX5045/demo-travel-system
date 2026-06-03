@@ -17,6 +17,8 @@ concurrency:
 
 jobs:
   build:
+    environment:
+      name: github-pages
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -30,6 +32,37 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Validate Vite environment
+        run: |
+          required_vars=(
+            VITE_TICA_TOUR_API_BASE_URL
+            VITE_API_CLIENT_LOGIN
+            VITE_API_CLIENT_LOGOUT
+            VITE_API_CLIENT_PROFILE
+            VITE_API_CLIENT_REFRESH
+            VITE_API_CLIENT_SIGNUP
+            VITE_API_CLIENT_SOCIAL_LOGIN
+            VITE_SUPABASE_ANON_KEY
+            VITE_SUPABASE_AUTH_BASE_URL
+          )
+
+          for var_name in "${required_vars[@]}"; do
+            if [ -z "${!var_name}" ]; then
+              echo "Missing required variable: $var_name"
+              exit 1
+            fi
+          done
+        env:
+          VITE_TICA_TOUR_API_BASE_URL: ${{ vars.VITE_TICA_TOUR_API_BASE_URL }}
+          VITE_API_CLIENT_LOGIN: ${{ vars.VITE_API_CLIENT_LOGIN }}
+          VITE_API_CLIENT_LOGOUT: ${{ vars.VITE_API_CLIENT_LOGOUT }}
+          VITE_API_CLIENT_PROFILE: ${{ vars.VITE_API_CLIENT_PROFILE }}
+          VITE_API_CLIENT_REFRESH: ${{ vars.VITE_API_CLIENT_REFRESH }}
+          VITE_API_CLIENT_SIGNUP: ${{ vars.VITE_API_CLIENT_SIGNUP }}
+          VITE_API_CLIENT_SOCIAL_LOGIN: ${{ vars.VITE_API_CLIENT_SOCIAL_LOGIN }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_AUTH_BASE_URL: ${{ vars.VITE_SUPABASE_AUTH_BASE_URL }}
 
       - name: Build
         run: yarn build:github
