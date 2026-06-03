@@ -60,7 +60,7 @@ export function FeedViewport({
   return (
     <section
       ref={viewportRef}
-      className="mx-auto h-svh w-full snap-y snap-mandatory overflow-y-auto overflow-x-hidden [scrollbar-width:none] lg:max-w-[38rem] lg:border-x lg:border-white/10 [&::-webkit-scrollbar]:hidden"
+      className="mx-auto h-svh w-full snap-y snap-mandatory overflow-y-auto overflow-x-hidden bg-white [scrollbar-width:none] dark:bg-gray-950 lg:max-w-[38rem] lg:border-x lg:border-gray-200 lg:dark:border-white/10 [&::-webkit-scrollbar]:hidden"
     >
       {trimmedBefore > 0 && (
         <div
@@ -81,10 +81,10 @@ export function FeedViewport({
         />
       ))}
       {!experiences.length && !isLoadingMore && (
-        <div className="grid h-svh snap-start place-items-center bg-gray-950 px-8 text-center text-white">
+        <div className="grid h-svh snap-start place-items-center bg-white px-8 text-center text-gray-950 dark:bg-gray-950 dark:text-white">
           <div>
             <p className="text-lg font-extrabold">{t("noResults")}</p>
-            <p className="mt-2 text-sm font-bold text-white/60">
+            <p className="mt-2 text-sm font-bold text-gray-500 dark:text-white/60">
               {t("noResultsHint")}
             </p>
           </div>

@@ -56,7 +56,7 @@ export function FeedActions({
           label={t("save")}
           isActive={isSaved}
           activeIconClassName="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.45)]"
-          activeLabelClassName="text-yellow-300"
+          activeLabelClassName="text-yellow-300 dark:text-yellow-300"
           onClick={onToggleSaved}
         />
         <FeedActionButton

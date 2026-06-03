@@ -36,7 +36,7 @@ function FeedExperienceSlide(
     <article
       ref={ref}
       data-feed-id={experience.id}
-      className="relative h-svh w-full snap-start snap-always overflow-visible bg-gray-950 lg:overflow-visible"
+      className="relative h-svh w-full snap-start snap-always overflow-visible bg-white text-white dark:bg-gray-950 lg:overflow-visible"
     >
       <FeedExperienceMedia
         experience={experience}

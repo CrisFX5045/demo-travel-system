@@ -90,7 +90,7 @@ export function DesktopSidebar({
   return (
     <div className="pointer-events-none fixed inset-0 z-30 hidden lg:block">
       <aside
-        className={`pointer-events-auto absolute bottom-0 left-0 top-[5.65rem] w-[21rem] overflow-y-auto border-r border-gray-100 bg-white px-5 pb-8 pt-5 shadow-2xl shadow-gray-950/10 transition-transform duration-300 ease-out will-change-transform ${
+        className={`pointer-events-auto absolute bottom-0 left-0 top-[5.65rem] w-[21rem] overflow-y-auto overscroll-contain border-r border-gray-100 bg-white px-5 pb-8 pt-5 shadow-2xl shadow-gray-950/10 transition-transform duration-300 ease-out will-change-transform [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
           isOpen
             ? "translate-x-0"
             : "-translate-x-[calc(100%+1rem)]"

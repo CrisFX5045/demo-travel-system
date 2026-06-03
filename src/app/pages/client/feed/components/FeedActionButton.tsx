@@ -35,10 +35,10 @@ export function FeedActionButton({
       }`}
     >
       <span
-        className={`grid size-12 place-items-center rounded-full shadow-lg transition-transform duration-150 ${
+        className={`grid size-12 place-items-center rounded-full text-gray-950 shadow-lg transition-transform duration-150 dark:text-white ${
           isActive && activeContainerClassName
             ? activeContainerClassName
-            : "bg-black/45"
+            : "bg-white/90 dark:bg-black/45"
         }`}
       >
         <DisplayIcon
@@ -48,7 +48,7 @@ export function FeedActionButton({
         />
       </span>
       <span
-        className={`text-xs font-bold transition-colors duration-200 ${
+        className={`text-xs font-bold text-white drop-shadow transition-colors duration-200 dark:text-white ${
           isActive ? activeLabelClassName : ""
         }`}
       >

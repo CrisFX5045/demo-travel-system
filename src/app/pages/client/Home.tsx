@@ -133,6 +133,7 @@ export default function ClientHome() {
       id="home"
       className="min-h-screen w-full max-w-[100svw] overflow-x-hidden bg-white pb-[calc(5.8rem+env(safe-area-inset-bottom))] text-gray-950 dark:bg-white"
     >
+      <HomeEntryFade />
       <ClientHeader
         isAuthenticated={isAuthenticated}
         isMenuOpen={isMenuOpen}
@@ -492,5 +493,36 @@ function FilterGroup({
       <h3 className="mb-2 text-sm font-extrabold">{title}</h3>
       {children}
     </section>
+  );
+}
+
+function HomeEntryFade() {
+  return (
+    <>
+      <div
+        aria-hidden="true"
+        data-client-home-entry-fade
+        className="pointer-events-none fixed inset-0 z-[90] bg-white [animation:client-home-entry-fade_180ms_ease-out_forwards]"
+      />
+      <style>
+        {`
+          @keyframes client-home-entry-fade {
+            from {
+              opacity: 1;
+            }
+            to {
+              opacity: 0;
+              visibility: hidden;
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            [data-client-home-entry-fade] {
+              animation-duration: 1ms !important;
+            }
+          }
+        `}
+      </style>
+    </>
   );
 }
