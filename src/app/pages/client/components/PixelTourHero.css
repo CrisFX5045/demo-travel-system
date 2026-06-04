@@ -1,0 +1,262 @@
+.pixel-tour-hero,
+.pixel-tour-hero * {
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.pixel-tour-hero {
+  background-color: #73b7d0;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.36);
+}
+
+.pixel-tour-hero__background {
+  z-index: 0;
+  user-select: none;
+  object-position: center 90%;
+}
+
+.pixel-tour-hero__sprite {
+  z-index: 1;
+  display: block;
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: calc(var(--pixel-tour-frames, 4) * 100%) 100%;
+  transform: translate3d(0, 0, 0);
+  user-select: none;
+}
+
+.pixel-tour-hero__sprite--lapa {
+  --pixel-tour-frames: 4;
+  z-index: 2;
+  top: 10%;
+  left: -14%;
+  width: clamp(36px, 4.4vw, 68px);
+  aspect-ratio: var(--pixel-tour-lapa-ratio, .45);
+  background-image: url("/images/animation/sprites-animation-home/lapa-volando-4-sprites.png");
+  animation:
+    pixel-tour-sprite-4 0.62s steps(1, end) infinite,
+    pixel-tour-lapa-flight 19s linear infinite;
+  will-change: transform, background-position;
+}
+
+.pixel-tour-hero__sprite--lapa-trail-one {
+  z-index: 1;
+  top: 16%;
+  left: -20%;
+  width: clamp(30px, 3.8vw, 58px);
+  opacity: 0.9;
+  animation-delay: -2.4s, -2.4s;
+}
+
+.pixel-tour-hero__sprite--lapa-trail-two {
+  z-index: 1;
+  top: 6%;
+  left: -25%;
+  width: clamp(26px, 3.4vw, 52px);
+  opacity: 0.82;
+  animation-delay: -5.2s, -5.2s;
+}
+
+.pixel-tour-hero__sprite--pajaro {
+  --pixel-tour-frames: 4;
+  top: 8%;
+  right: -10%;
+  width: clamp(18px, 2.6vw, 36px);
+  aspect-ratio: var(--pixel-tour-pajaro-ratio, .45);
+  opacity: 0.78;
+  background-image: url("/images/animation/sprites-animation-home/pajaro-negro-volando-4-sprites.png");
+  animation:
+    pixel-tour-sprite-4 0.82s steps(1, end) infinite,
+    pixel-tour-pajaro-flight 28s linear infinite;
+  will-change: transform, background-position;
+}
+
+.pixel-tour-hero__sprite--pajaro-trail-one {
+  top: 13%;
+  right: -15%;
+  width: clamp(15px, 2.2vw, 31px);
+  opacity: 0.66;
+  animation-delay: -4.8s, -4.8s;
+}
+
+.pixel-tour-hero__sprite--pajaro-trail-two {
+  top: 4%;
+  right: -20%;
+  width: clamp(13px, 2vw, 28px);
+  opacity: 0.56;
+  animation-delay: -9.6s, -9.6s;
+}
+
+.pixel-tour-hero__sprite--rana {
+  --pixel-tour-frames: 4;
+  --pixel-tour-frog-right: -3px;
+  --pixel-tour-frog-blink-offset: 2px;
+  transform: rotateY(124deg)!important;
+  right: var(--pixel-tour-frog-right);
+  bottom: -20px;
+  width: clamp(60px, 6vw, 82px);
+  aspect-ratio: 1 / 1;
+  background-image: url("/images/animation/sprites-animation-home/rana-grande-verde-parpadeando-4-sprites.png");
+  animation:
+    pixel-tour-blink 4.8s steps(1, end) infinite,
+    pixel-tour-frog-blink-lock 4.8s steps(1, end) infinite;
+  will-change: right, background-position;
+}
+
+.pixel-tour-hero__sprite--letrero {
+  left: clamp(12px, 4vw, 52px);
+  top: clamp(6px, 1.4vw, 18px);
+  width: clamp(190px, 24vw, 380px);
+  aspect-ratio: 1 / 1;
+  background-image: url("/images/animation/sprites-animation-home/letrero-inmovil-2026-lanzamiento-1-sprite.png");
+  background-size: contain;
+}
+
+@media (min-width: 768px) {
+  .pixel-tour-hero__sprite--rana {
+    --pixel-tour-frog-right: 6px;
+    --pixel-tour-frog-blink-offset: 3px;
+    bottom: -43px;
+    width: clamp(76px, 7vw, 118px);
+  }
+
+  .pixel-tour-hero__sprite--letrero {
+    left: clamp(18px, 4vw, 76px);
+    top: clamp(0px, 0.8vw, 12px);
+    width: clamp(220px, 25vw, 420px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .pixel-tour-hero__sprite--rana {
+    --pixel-tour-frog-right: 8px;
+    --pixel-tour-frog-blink-offset: 3px;
+    bottom: -45px;
+    width: clamp(104px, 8vw, 150px);
+  }
+
+  .pixel-tour-hero__sprite--letrero {
+    left: clamp(0px, 0vw, 95px);
+    top: clamp(-8px, 0.5vw, -5px);
+    width: clamp(300px, 26vw, 500px);
+  }
+}
+
+@keyframes pixel-tour-sprite-4 {
+  0%,
+  24.99% {
+    background-position-x: 0%;
+  }
+
+  25%,
+  49.99% {
+    background-position-x: 33.333333%;
+  }
+
+  50%,
+  74.99% {
+    background-position-x: 66.666667%;
+  }
+
+  75%,
+  100% {
+    background-position-x: 100%;
+  }
+}
+
+@keyframes pixel-tour-blink {
+  0%,
+  72% {
+    background-position-x: 0%;
+  }
+
+  78%,
+  88% {
+    background-position-x: 66.666667%;
+  }
+
+  100% {
+    background-position-x: 0%;
+  }
+}
+
+@keyframes pixel-tour-frog-blink-lock {
+  0%,
+  72% {
+    right: var(--pixel-tour-frog-right);
+  }
+
+  78%,
+  88% {
+    right: calc(var(--pixel-tour-frog-right) + var(--pixel-tour-frog-blink-offset));
+  }
+
+  100% {
+    right: var(--pixel-tour-frog-right);
+  }
+}
+
+@keyframes pixel-tour-lapa-flight {
+  0% {
+    transform: translate3d(0, 12px, 0) scaleX(1);
+  }
+
+  45% {
+    transform: translate3d(54vw, -10px, 0) scaleX(1);
+  }
+
+  100% {
+    transform: translate3d(118vw, 8px, 0) scaleX(1);
+  }
+}
+
+@keyframes pixel-tour-pajaro-flight {
+  0% {
+    transform: translate3d(0, 2px, 0) scaleX(-1);
+  }
+
+  100% {
+    transform: translate3d(-118vw, 26px, 0) scaleX(-1);
+  }
+}
+
+@media (max-width: 767px) {
+  .pixel-tour-hero__sprite--lapa {
+    top: 10%;
+    animation-duration: 0.62s, 16s;
+  }
+
+  .pixel-tour-hero__sprite--lapa-trail-one {
+    top: 16%;
+  }
+
+  .pixel-tour-hero__sprite--lapa-trail-two {
+    top: 5%;
+  }
+
+  .pixel-tour-hero__sprite--pajaro {
+    top: 7%;
+    animation-duration: 0.82s, 23s;
+  }
+
+  .pixel-tour-hero__sprite--pajaro-trail-one {
+    top: 12%;
+  }
+
+  .pixel-tour-hero__sprite--pajaro-trail-two {
+    top: 3%;
+  }
+
+  .pixel-tour-hero__sprite--letrero {
+    left: -18px;
+    top: 0px;
+    width: clamp(142px, 55vw, 252px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-tour-hero__sprite {
+    animation: none;
+    will-change: auto;
+  }
+}

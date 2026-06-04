@@ -17,6 +17,7 @@ export { FilterRail } from "./FilterRail";
 export { LikeToggleButton } from "./LikeToggleButton";
 export { MapPreviewSection } from "./MapPreviewSection";
 export { MobileDrawer } from "./MobileDrawer";
+export { PixelTourHero } from "./PixelTourHero";
 export { PromotionsSection } from "./PromotionsSection";
 export { SectionHeader } from "./SectionHeader";
 export { TourCard } from "./TourCard";

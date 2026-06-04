@@ -24,6 +24,7 @@ import {
   HorizontalExperienceSkeletons,
   MapPreviewSection,
   MobileDrawer,
+  PixelTourHero,
   PromotionsSection,
   SectionHeader,
   TourCard,
@@ -168,17 +169,25 @@ export default function ClientHome() {
           isMenuOpen ? "lg:pl-[21rem]" : "lg:pl-0"
         }`}
       >
+                <div className="px-2 pb-5 pt-2 sm:px-4 md:px-8 md:pb-6">
+          <PixelTourHero />
+        </div>
         <CategoryTabs
           tabs={tabs}
           activeTab={activeClientType}
           onSelectTab={setActiveClientType}
         />
         <CategoryRail categories={categoryTiles} activeType={activeClientType} />
+
+
+
         <FilterRail
           filters={filterPills}
           activeType={activeClientType}
           onOpenFilters={() => setIsFilterSheetOpen(true)}
         />
+
+
 
         {activeClientType === "Tours" && (
           <section className="px-4 pb-8 pt-1 md:px-8 md:pb-10 md:pt-0">
