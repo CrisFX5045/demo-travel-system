@@ -100,14 +100,10 @@ export const authApi = {
     updateClientSession({
       profile,
       profileFetchedAt: new Date().toISOString(),
-      profileNeedsRefresh: true,
+      profileNeedsRefresh: false,
     });
 
-    try {
-      return await authApi.getProfileMe();
-    } catch {
-      return profile;
-    }
+    return profile;
   },
 
   async registerTraveler(payload: TravelerSignupPayload) {

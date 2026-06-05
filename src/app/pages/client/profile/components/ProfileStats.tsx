@@ -33,7 +33,7 @@ export function ProfileStats({
   ];
 
   return (
-    <section className="grid grid-cols-3 gap-2 md:gap-3">
+    <section className="grid h-fit grid-cols-3 items-start gap-2 md:gap-3">
       {profileStats.map((stat) => (
         <Link
           key={stat.label}

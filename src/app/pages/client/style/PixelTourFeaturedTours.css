@@ -64,13 +64,18 @@
 }
 
 .pixel-tour-featured__desktop-popover {
-  position: fixed;
+  position: absolute;
   z-index: 998;
   width: min(20rem, 30vw);
   pointer-events: auto;
   transform: translateX(-50%);
   transform-origin: 50% 0;
   animation: pixel-tour-desktop-popover-in 180ms cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.pixel-tour-featured__desktop-popover.is-closing {
+  pointer-events: none;
+  animation: pixel-tour-desktop-popover-out 180ms cubic-bezier(.4, 0, .2, 1) both;
 }
 
 .pixel-tour-featured__desktop-popover::before {
@@ -290,7 +295,8 @@
 
 .pixel-tour-featured__card:hover .pixel-tour-featured__peek span,
 .pixel-tour-featured__card:focus .pixel-tour-featured__peek span,
-.pixel-tour-featured__card:focus-within .pixel-tour-featured__peek span {
+.pixel-tour-featured__card:focus-within .pixel-tour-featured__peek span,
+.pixel-tour-featured__card.is-active .pixel-tour-featured__peek span {
   background: #111827;
   color: #fff;
   box-shadow: 0 9px 22px rgb(17 24 39 / 0.24);
@@ -746,6 +752,18 @@
   }
 }
 
+@keyframes pixel-tour-desktop-popover-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) scale(0.92);
+  }
+}
+
 @keyframes pixel-tour-desktop-gallery {
   0%,
   20% {
@@ -855,8 +873,11 @@
 
   .pixel-tour-featured__desktop-gallery-track,
   .pixel-tour-featured__desktop-gallery-dots span,
-  .pixel-tour-featured__desktop-gallery-controls button {
+  .pixel-tour-featured__desktop-gallery-controls button,
+  .pixel-tour-featured__desktop-popover,
+  .pixel-tour-featured__desktop-popover.is-closing {
     transition: none;
+    animation: none;
   }
 
   .pixel-tour-featured__desktop-gallery-dots span {

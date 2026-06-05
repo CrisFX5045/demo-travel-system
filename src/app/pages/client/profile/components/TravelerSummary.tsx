@@ -28,7 +28,7 @@ export function TravelerSummary({
   const VerificationIcon = isIdentityVerified ? CheckBadgeIcon : XCircleIcon;
 
   return (
-    <section className="overflow-hidden rounded-[1.75rem] bg-gray-950 text-white shadow-xl shadow-gray-200/80">
+    <section className="h-fit overflow-hidden rounded-[1.75rem] bg-gray-950 text-white shadow-xl shadow-gray-200/80">
       <div className="relative p-5 md:p-6">
         <div className="absolute -right-10 -top-16 size-40 rounded-full bg-white/10" />
         <div className="absolute bottom-3 right-6 size-20 rounded-full bg-emerald-400/20" />

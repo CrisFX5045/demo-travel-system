@@ -106,8 +106,8 @@ export default function ClientProfile() {
       />
       <div className="h-[5.05rem]" />
 
-      <div className="mx-auto grid w-full max-w-5xl animate-[profile-content-in_620ms_80ms_ease-out_both] gap-4 px-4 py-5 md:grid-cols-[minmax(0,1fr)_20rem] md:px-8 md:py-6">
-        <div className="grid gap-4">
+      <div className="mx-auto grid w-full max-w-5xl animate-[profile-content-in_620ms_80ms_ease-out_both] items-start gap-4 px-4 py-5 md:grid-cols-[minmax(0,1fr)_20rem] md:px-8 md:py-6">
+        <div className="grid content-start gap-4">
           {isProfileLoading || !hasRealProfile ? (
             <ProfileSummarySkeleton />
           ) : (

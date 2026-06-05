@@ -15,7 +15,7 @@ export function ProfileSection({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[1.5rem] border border-gray-100 bg-white p-4 shadow-sm shadow-gray-200/60 md:p-5">
+    <section className="h-fit rounded-[1.5rem] border border-gray-100 bg-white p-4 shadow-sm shadow-gray-200/60 md:p-5">
       <div className="mb-4 flex min-w-0 items-start justify-between gap-4">
         <div className="min-w-0">
           <h2 className="truncate text-xl font-extrabold">{title}</h2>

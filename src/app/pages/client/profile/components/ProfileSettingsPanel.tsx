@@ -28,18 +28,24 @@ export function ProfileSettingsPanel({
   const [saveSearches, setSaveSearches] = useState(true);
   const [locationRecommendations, setLocationRecommendations] = useState(false);
   const [isSavingDarkMode, setIsSavingDarkMode] = useState(false);
+  const [darkModeSaveError, setDarkModeSaveError] = useState(false);
+  const [optimisticDarkMode, setOptimisticDarkMode] = useState(
+    () => darkMode ?? isDark,
+  );
 
   useEffect(() => {
     if (typeof darkMode !== "boolean") return;
+    if (isSavingDarkMode) return;
 
     const preferredTheme = darkMode ? "dark" : "light";
+    setOptimisticDarkMode(darkMode);
     if (themeMode !== preferredTheme) {
       setThemeMode(preferredTheme);
     }
     // setThemeMode is recreated by ThemeProvider on each render.
     // Including it here can cause repeated localStorage writes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [darkMode, themeMode]);
+  }, [darkMode, isSavingDarkMode, themeMode]);
 
   return (
     <div className="grid gap-2">
@@ -47,12 +53,16 @@ export function ProfileSettingsPanel({
         icon={MoonIcon}
         title={copy.darkMode}
         hint={copy.darkModeHint}
-        checked={isDark}
-        disabled={isSavingDarkMode}
+        checked={optimisticDarkMode}
         onChange={(checked) => {
           void handleDarkModeChange(checked);
         }}
       />
+      {darkModeSaveError ? (
+        <p className="-mt-1 rounded-2xl bg-red-50 px-3 py-2 text-xs font-extrabold text-red-600 dark:bg-red-500/10 dark:text-red-300">
+          Fallo el guardado, pero el tema se cambio a nivel cliente.
+        </p>
+      ) : null}
       <SettingToggle
         icon={BellAlertIcon}
         title={copy.travelAlerts}
@@ -78,10 +88,17 @@ export function ProfileSettingsPanel({
   );
 
   async function handleDarkModeChange(checked: boolean) {
-    const previousTheme = themeMode;
     const nextTheme = checked ? "dark" : "light";
 
+    setDarkModeSaveError(false);
+    setOptimisticDarkMode(checked);
     setThemeMode(nextTheme);
+    if (profile) {
+      onProfileUpdated?.({
+        ...profile,
+        darkMode: checked,
+      });
+    }
     setIsSavingDarkMode(true);
 
     try {
@@ -100,7 +117,7 @@ export function ProfileSettingsPanel({
         darkMode: checked,
       });
     } catch (error) {
-      setThemeMode(previousTheme);
+      setDarkModeSaveError(true);
       console.error("No se pudo actualizar el perfil.", error);
     } finally {
       setIsSavingDarkMode(false);

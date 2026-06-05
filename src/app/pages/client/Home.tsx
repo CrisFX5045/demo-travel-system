@@ -169,7 +169,7 @@ export default function ClientHome() {
           isMenuOpen ? "lg:pl-[21rem]" : "lg:pl-0"
         }`}
       >
-                <div className="px-2 pb-5 pt-2 sm:px-4 md:px-8 md:pb-6">
+                <div className="px-2 pb-5 pt-2 sm:px-4 md:px-8 md:pb-4">
           <PixelTourHero />
         </div>
         <CategoryTabs

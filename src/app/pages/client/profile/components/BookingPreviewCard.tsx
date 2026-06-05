@@ -18,12 +18,12 @@ export function BookingPreviewCard({
     <Link
       to={`/client/profile/bookings/${experience.id}`}
       state={{ from: returnTo }}
-      className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-3xl bg-gray-50 p-2 transition active:scale-[0.99] md:grid-cols-[7rem_minmax(0,1fr)]"
+      className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-start gap-3 rounded-3xl bg-gray-50 p-2 transition active:scale-[0.99] md:grid-cols-[7rem_minmax(0,1fr)]"
     >
       <img
         src={experience.image}
         alt=""
-        className="h-full min-h-24 rounded-2xl object-cover"
+        className="h-24 w-full rounded-2xl object-cover md:h-28"
       />
       <div className="min-w-0 py-1 pr-2">
         <div className="flex items-start justify-between gap-3">
