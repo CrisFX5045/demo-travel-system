@@ -3,7 +3,11 @@ import {
   MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useMemo } from "react";
 import { Link } from "react-router";
+
+import { normalizeTravelerProfile } from "@/app/api/normalizers";
+import { getClientSession } from "@/app/api/session";
 
 import { useClientI18n } from "../i18n";
 import { SearchButton } from "./SearchButton";
@@ -28,6 +32,13 @@ export function ClientHeader({
   onOpenMobileMenu: () => void;
 }) {
   const { t } = useClientI18n();
+  const travelerProfile = useMemo(() => {
+    const sessionProfile = getClientSession()?.profile;
+    return sessionProfile ? normalizeTravelerProfile(sessionProfile) : null;
+  }, [isAuthenticated]);
+  const profileName =
+    travelerProfile?.fullName || travelerProfile?.email || t("profile");
+  const profileInitials = getProfileInitials(profileName);
 
   return (
     <header
@@ -81,12 +92,13 @@ export function ClientHeader({
           </span>
         </Link>
         {isAuthenticated ? (
-          <Link
-            to="/client/profile"
-            className="cursor-pointer rounded-full bg-gray-950 px-5 py-3 font-bold text-white transition hover:bg-gray-800 active:scale-[0.98]"
-          >
-            {t("profile")}
-          </Link>
+          <ProfileAvatarLink
+            avatarUrl={travelerProfile?.avatarUrl}
+            initials={profileInitials}
+            label={t("profile")}
+            sizeClassName="size-12"
+            textClassName="text-sm"
+          />
         ) : (
           <>
             <Link to="/client/login" className="cursor-pointer font-bold transition hover:text-green-700">
@@ -115,7 +127,13 @@ export function ClientHeader({
             CR Trips
           </Link>
           {isAuthenticated ? (
-            <span className="size-8" aria-hidden="true" />
+            <ProfileAvatarLink
+              avatarUrl={travelerProfile?.avatarUrl}
+              initials={profileInitials}
+              label={t("profile")}
+              sizeClassName="size-9"
+              textClassName="text-xs"
+            />
           ) : (
             <Link
               to="/client/login"
@@ -130,4 +148,55 @@ export function ClientHeader({
       </div>
     </header>
   );
+}
+
+function ProfileAvatarLink({
+  avatarUrl,
+  initials,
+  label,
+  sizeClassName,
+  textClassName,
+}: {
+  avatarUrl?: string | null;
+  initials: string;
+  label: string;
+  sizeClassName: string;
+  textClassName: string;
+}) {
+  return (
+    <Link
+      to="/client/profile"
+      aria-label={label}
+      title={label}
+      className={`grid ${sizeClassName} shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-gray-950 font-extrabold text-white ring-2 ring-white shadow-sm shadow-gray-200 transition hover:scale-105 hover:ring-green-200 active:scale-95`}
+    >
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt=""
+          className="h-full w-full object-cover"
+          draggable={false}
+        />
+      ) : (
+        <span className={textClassName}>{initials}</span>
+      )}
+    </Link>
+  );
+}
+
+function getProfileInitials(value: string) {
+  const normalizedValue = value.trim();
+
+  if (!normalizedValue) return "U";
+
+  if (normalizedValue.includes("@")) {
+    return normalizedValue[0]?.toUpperCase() ?? "U";
+  }
+
+  return normalizedValue
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
