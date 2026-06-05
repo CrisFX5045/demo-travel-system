@@ -42,6 +42,8 @@ const clientTranslations = {
     companyLogin: "Entrar como empresa",
     companyAccessHint:
       "Si representas una empresa turistica, usa este enlace para ingresar. Si necesitas acceso al sistema, contactanos para habilitar tu cuenta.",
+    themeMode: "Modo oscuro",
+    themeModeHint: "Cambia el tema aunque no hayas iniciado sesion.",
     companies: "Empresas",
     language: "Idioma",
     exploringIn: "Explorando en",
@@ -201,6 +203,8 @@ const clientTranslations = {
     companyLogin: "Business login",
     companyAccessHint:
       "If you represent a tourism company, use this link to sign in. If you need system access, contact us so we can enable your account.",
+    themeMode: "Dark mode",
+    themeModeHint: "Switch the theme even before signing in.",
     companies: "Companies",
     language: "Language",
     exploringIn: "Exploring in",

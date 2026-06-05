@@ -196,6 +196,33 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pixel-tour-hero__sprite--pajaro {
+    z-index: 3;
+    top: 9%;
+    right: -4%;
+    width: clamp(22px, 3.2vw, 34px);
+    opacity: 0.82;
+    animation-delay: -8s, -8s;
+  }
+
+  .pixel-tour-hero__sprite--pajaro-trail-one {
+    top: 15%;
+    right: -7%;
+    width: clamp(18px, 2.7vw, 29px);
+    opacity: 0.7;
+    animation-delay: -12s, -12s;
+  }
+
+  .pixel-tour-hero__sprite--pajaro-trail-two {
+    top: 5%;
+    right: -10%;
+    width: clamp(16px, 2.4vw, 26px);
+    opacity: 0.62;
+    animation-delay: -16s, -16s;
+  }
+}
+
 @media (min-width: 1280px) {
   .pixel-tour-hero__sprite--rana {
     --pixel-tour-frog-right: 8px;

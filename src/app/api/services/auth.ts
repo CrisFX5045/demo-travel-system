@@ -22,6 +22,7 @@ export type TravelerSignupPayload = {
   phone?: string;
   preferredLanguage: "es" | "en";
   preferredCurrency: "CRC" | "USD";
+  darkMode?: boolean;
 };
 
 export type SupabasePasswordTokenResponse = {
@@ -126,13 +127,13 @@ export const authApi = {
         email: payload.email,
         user: data.user,
         profile: {
+          ...(data.user && typeof data.user === "object" ? data.user : {}),
           fullName: payload.fullName,
           phone: payload.phone,
           preferredLanguage: payload.preferredLanguage,
           preferredCurrency: payload.preferredCurrency,
-          darkMode: false,
+          darkMode: payload.darkMode ?? false,
           profileCompletion: 30,
-          ...(data.user && typeof data.user === "object" ? data.user : {}),
         },
       },
     });

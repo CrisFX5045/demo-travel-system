@@ -10,6 +10,7 @@ import { Link, useNavigate } from "react-router";
 import { authApi } from "@/app/api/services";
 import type { ClientNavItem } from "../content";
 import { clientLanguages, useClientI18n } from "../i18n";
+import { ClientThemeSwitch } from "./ClientThemeSwitch";
 
 export function MobileDrawer({
   isOpen,
@@ -214,6 +215,10 @@ export function MobileDrawer({
             );
           })}
         </nav>
+
+        <div className="mt-5 border-t border-gray-100 pt-4 dark:border-dark-600">
+          <ClientThemeSwitch />
+        </div>
 
         {isAuthenticated && (
           <div className="mt-3 border-t border-gray-100 pt-3">

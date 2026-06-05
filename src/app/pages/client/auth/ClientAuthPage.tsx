@@ -12,6 +12,7 @@ import { Link, useNavigate } from "react-router";
 
 import { authApi } from "@/app/api/services";
 import { setClientSession } from "@/app/api/session";
+import { useThemeContext } from "@/app/contexts/theme/context";
 import { Page } from "@/components/shared/Page";
 import { Button, Card, Checkbox, Input } from "@/components/ui";
 import { clientLanguages, useClientI18n } from "../i18n";
@@ -62,6 +63,7 @@ const authCopy = {
 export function ClientAuthPage({ mode }: { mode: AuthMode }) {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useClientI18n();
+  const { isDark } = useThemeContext();
   const [acceptedTerms, setAcceptedTerms] = useState(mode === "login");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -122,6 +124,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
           phone: phone || undefined,
           preferredLanguage: language,
           preferredCurrency: currency,
+          darkMode: isDark,
         });
       } else {
         await authApi.loginWithPassword({ email, password });

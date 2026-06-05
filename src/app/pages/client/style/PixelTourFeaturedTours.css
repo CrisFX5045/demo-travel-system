@@ -859,6 +859,27 @@
   }
 }
 
+@media (min-width: 768px) and (max-width: 1023px) {
+  .pixel-tour-featured__desktop-popover {
+    width: min(21rem, 38vw);
+  }
+
+  .pixel-tour-featured__content.pixel-tour-featured__content--desktop {
+    height: 304px;
+    grid-template-rows: 112px minmax(0, 1fr) 52px;
+  }
+
+  .pixel-tour-featured__copy--desktop {
+    gap: 6px;
+  }
+
+  .pixel-tour-featured__desktop-description {
+    -webkit-line-clamp: 3;
+    font-size: 0.78rem;
+    line-height: 1.3;
+  }
+}
+
 @media (max-width: 767px) {
   .pixel-tour-featured__modal-card {
     max-height: min(76svh, 26rem);

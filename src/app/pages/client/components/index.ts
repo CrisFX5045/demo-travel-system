@@ -3,6 +3,7 @@ export { CategoryRail } from "./CategoryRail";
 export { CategoryTabs } from "./CategoryTabs";
 export { ClientAuthPrompt } from "./ClientAuthPrompt";
 export { ClientHeader } from "./ClientHeader";
+export { ClientThemeSwitch } from "./ClientThemeSwitch";
 export {
   BookingCardSkeleton,
   ExperienceCardSkeleton,
