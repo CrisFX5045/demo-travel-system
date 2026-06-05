@@ -198,7 +198,7 @@
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .pixel-tour-hero__sprite--pajaro {
-    z-index: 3;
+    z-index: 1;
     top: 9%;
     right: -4%;
     width: clamp(22px, 3.2vw, 34px);
@@ -338,13 +338,17 @@
   }
 }
 
+.pixel-tour-hero__sprite--pajaro {
+  transform: scaleX(-1);
+}
+
 @keyframes pixel-tour-pajaro-flight {
   0% {
-    transform: translate3d(0, 2px, 0) scaleX(-1);
+    translate: 0 2px;
   }
 
   100% {
-    transform: translate3d(-118vw, 26px, 0) scaleX(-1);
+    translate: -118vw 26px;
   }
 }
 
