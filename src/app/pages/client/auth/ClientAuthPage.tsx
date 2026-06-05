@@ -292,11 +292,17 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                   }`}
                   disabled={(isSignup && !acceptedTerms) || isSubmitting}
                 >
-                  {isSubmitting
-                    ? isSignup
-                      ? "Creando cuenta..."
-                      : "Validando..."
-                    : t(copy.action)}
+                  {isSubmitting ? (
+                    <AuthSubmittingLabel
+                      label={
+                        isSignup
+                          ? t("authSignupSubmitting")
+                          : t("authLoginSubmitting")
+                      }
+                    />
+                  ) : (
+                    t(copy.action)
+                  )}
                 </Button>
               </form>
 
@@ -381,6 +387,19 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                 transform: translateX(0) scale(1);
               }
             }
+
+            @keyframes auth-dot-bounce {
+              0%,
+              80%,
+              100% {
+                opacity: 0.35;
+                transform: translateY(0) scale(0.82);
+              }
+              40% {
+                opacity: 1;
+                transform: translateY(-3px) scale(1);
+              }
+            }
           `}
         </style>
       </main>
@@ -430,6 +449,19 @@ function CurrencyDropdown({
 
 function parsePreferredCurrency(value: FormDataEntryValue | string | null): PreferredCurrency {
   return value === "USD" ? "USD" : "CRC";
+}
+
+function AuthSubmittingLabel({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center justify-center gap-2">
+      <span>{label}</span>
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        <span className="size-1.5 animate-[auth-dot-bounce_900ms_ease-in-out_infinite] rounded-full bg-current" />
+        <span className="size-1.5 animate-[auth-dot-bounce_900ms_120ms_ease-in-out_infinite] rounded-full bg-current" />
+        <span className="size-1.5 animate-[auth-dot-bounce_900ms_240ms_ease-in-out_infinite] rounded-full bg-current" />
+      </span>
+    </span>
+  );
 }
 
 function AuthImageCarousel({

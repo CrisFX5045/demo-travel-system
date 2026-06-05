@@ -1,4 +1,8 @@
 import type { TFunction } from "i18next";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -193,7 +197,9 @@ export function PixelTourFeaturedTours() {
         {featuredTours.map((tour) => (
           <article
             key={tour.id}
-            className="pixel-tour-featured__card"
+            className={`pixel-tour-featured__card ${
+              tour.id === activeDesktopTourId ? "is-active" : ""
+            }`}
             tabIndex={0}
             onMouseEnter={(event) =>
               openDesktopTour(tour.id, event.currentTarget)
@@ -385,15 +391,83 @@ function TourPromotionPanel({
   t: TFunction;
 }) {
   const images = tour.images?.length ? tour.images : [tour.image];
+  const desktopImages = images.slice(0, 4);
+  const desktopSlideCount = desktopImages.length;
+  const [activeDesktopImageIndex, setActiveDesktopImageIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveDesktopImageIndex(0);
+  }, [tour.id]);
+
+  useEffect(() => {
+    if (desktopSlideCount <= 1) return;
+
+    const timer = window.setInterval(() => {
+      setActiveDesktopImageIndex((current) =>
+        current === desktopSlideCount - 1 ? 0 : current + 1,
+      );
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, [desktopSlideCount, tour.id]);
+
+  const showPreviousDesktopImage = () => {
+    setActiveDesktopImageIndex((current) =>
+      current === 0 ? desktopSlideCount - 1 : current - 1,
+    );
+  };
+
+  const showNextDesktopImage = () => {
+    setActiveDesktopImageIndex((current) =>
+      current === desktopSlideCount - 1 ? 0 : current + 1,
+    );
+  };
 
   return (
     <article className="pixel-tour-featured__content pixel-tour-featured__content--desktop">
-      <div className="pixel-tour-featured__desktop-gallery">
-        <div className="pixel-tour-featured__desktop-gallery-track">
-          {images.slice(0, 4).map((image, index) => (
+      <div
+        className={`pixel-tour-featured__desktop-gallery pixel-tour-featured__desktop-gallery--${desktopSlideCount}`}
+      >
+        <div
+          className="pixel-tour-featured__desktop-gallery-track"
+          style={{
+            transform: `translateX(-${activeDesktopImageIndex * 100}%)`,
+          }}
+        >
+          {desktopImages.map((image, index) => (
             <img key={`${image}-${index}`} src={image} alt="" loading="lazy" />
           ))}
         </div>
+        {desktopSlideCount > 1 ? (
+          <>
+            <div className="pixel-tour-featured__desktop-gallery-controls">
+              <button
+                type="button"
+                onClick={showPreviousDesktopImage}
+                aria-label={t("client.pixelTour.featured.previousImage")}
+              >
+                <ChevronLeftIcon className="size-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={showNextDesktopImage}
+                aria-label={t("client.pixelTour.featured.nextImage")}
+              >
+                <ChevronRightIcon className="size-3.5" />
+              </button>
+            </div>
+            <div className="pixel-tour-featured__desktop-gallery-dots">
+              {desktopImages.map((image, index) => (
+                <span
+                  key={`${image}-${index}`}
+                  className={
+                    index === activeDesktopImageIndex ? "is-active" : undefined
+                  }
+                />
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
       <div className="pixel-tour-featured__copy pixel-tour-featured__copy--desktop">
         <div className="pixel-tour-featured__badges">

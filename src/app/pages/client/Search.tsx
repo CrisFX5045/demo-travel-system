@@ -425,11 +425,9 @@ export default function ClientSearch() {
           @keyframes client-search-page-in {
             from {
               opacity: 0;
-              transform: translateY(10px);
             }
             to {
               opacity: 1;
-              transform: translateY(0);
             }
           }
 
@@ -525,7 +523,7 @@ export default function ClientSearch() {
         )}
       </header>
 
-      <div className="client-search-animated mx-auto box-border w-[100dvw] max-w-full px-2 py-5 [animation:client-search-content-in_520ms_120ms_cubic-bezier(.22,1,.36,1)_both] md:max-w-4xl md:px-8">
+      <div className="client-search-animated mx-auto box-border w-[100dvw] max-w-full px-2 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-5 [animation:client-search-content-in_520ms_120ms_cubic-bezier(.22,1,.36,1)_both] md:max-w-4xl md:px-8 md:pb-5">
         {isResultsMode ? (
           <section className="w-full min-w-0 max-w-full">
             <div className="mb-4 grid min-w-0 gap-3">
@@ -916,8 +914,6 @@ export default function ClientSearch() {
           </button>
         </div>
       </div>
-
-      <div className="h-28 md:hidden" />
 
       <SearchFilterSheet
         isOpen={isFilterOpen}

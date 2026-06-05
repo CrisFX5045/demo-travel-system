@@ -213,6 +213,8 @@
         "close": "Close",
         "closePromotion": "Close promotion",
         "imageLabel": "View image {{number}}",
+        "previousImage": "Previous image",
+        "nextImage": "Next image",
         "ratingValue": "{{rating}} rating",
         "facts": {
           "duration": "Duration",

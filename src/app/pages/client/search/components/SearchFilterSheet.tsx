@@ -97,7 +97,7 @@ export function SearchFilterSheet({
           </button>
         </div>
 
-        <div className="grid gap-8 overflow-y-auto px-6 py-6">
+        <div className="grid min-h-0 flex-1 gap-8 overflow-y-auto px-6 py-6">
           <FilterSheetGroup
             title={t("date")}
             action={
