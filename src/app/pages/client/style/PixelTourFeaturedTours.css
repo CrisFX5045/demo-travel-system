@@ -849,6 +849,104 @@
   color: #fff;
 }
 
+:root.dark .pixel-tour-featured__desktop-popover::before {
+  border-left-color: rgb(71 85 105 / 0.85);
+  border-top-color: rgb(71 85 105 / 0.85);
+  background: rgb(15 23 42 / 0.98);
+}
+
+:root.dark .pixel-tour-featured__content,
+:root.dark .pixel-tour-featured__modal-card {
+  border-color: rgb(71 85 105 / 0.72);
+  background: rgb(15 23 42 / 0.98);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.42);
+  color: #f8fafc;
+}
+
+:root.dark .pixel-tour-featured__desktop-gallery,
+:root.dark .pixel-tour-featured__content img {
+  border-color: rgb(71 85 105 / 0.72);
+}
+
+:root.dark .pixel-tour-featured__content h3,
+:root.dark .pixel-tour-featured__footer span,
+:root.dark .pixel-tour-featured__modal-body h3,
+:root.dark .pixel-tour-featured__modal-facts strong {
+  color: #f8fafc;
+}
+
+:root.dark .pixel-tour-featured__desktop-description,
+:root.dark .pixel-tour-featured__modal-description {
+  color: #cbd5e1 !important;
+}
+
+:root.dark .pixel-tour-featured__meta,
+:root.dark .pixel-tour-featured__modal-body p {
+  color: #86efac;
+}
+
+:root.dark .pixel-tour-featured__footer,
+:root.dark .pixel-tour-featured__modal-footer {
+  border-top-color: rgb(71 85 105 / 0.72);
+}
+
+:root.dark .pixel-tour-featured__footer small,
+:root.dark .pixel-tour-featured__modal-body > span,
+:root.dark .pixel-tour-featured__modal-facts small {
+  color: #94a3b8;
+}
+
+:root.dark .pixel-tour-featured__badges span:last-child,
+:root.dark .pixel-tour-featured__desktop-facts span,
+:root.dark .pixel-tour-featured__modal-tags span {
+  background: rgb(30 41 59 / 0.95);
+  color: #dbeafe;
+}
+
+:root.dark .pixel-tour-featured__copy,
+:root.dark .pixel-tour-featured__copy--desktop,
+:root.dark .pixel-tour-featured__modal-body {
+  scrollbar-color: rgb(148 163 184 / 0.7) rgb(15 23 42 / 0.9);
+}
+
+:root.dark .pixel-tour-featured__copy::-webkit-scrollbar-thumb,
+:root.dark .pixel-tour-featured__copy--desktop::-webkit-scrollbar-thumb,
+:root.dark .pixel-tour-featured__modal-body::-webkit-scrollbar-thumb {
+  background: rgb(148 163 184 / 0.7);
+}
+
+:root.dark .pixel-tour-featured__modal-facts div {
+  border-color: rgb(71 85 105 / 0.72);
+  background: rgb(30 41 59 / 0.72);
+}
+
+:root.dark .pixel-tour-featured__modal-footer button {
+  background: rgb(30 41 59 / 0.95);
+  color: #f8fafc;
+}
+
+:root.dark .pixel-tour-featured__footer a,
+:root.dark .pixel-tour-featured__modal-footer a {
+  background: #f8fafc;
+  color: #111827;
+}
+
+:root.dark .pixel-tour-featured__peek span,
+:root.dark .pixel-tour-featured__chips button {
+  border-color: rgb(255 255 255 / 0.18);
+  background: rgb(15 23 42 / 0.86);
+  color: #f8fafc;
+  box-shadow: 0 8px 22px rgb(0 0 0 / 0.24);
+}
+
+:root.dark .pixel-tour-featured__card:hover .pixel-tour-featured__peek span,
+:root.dark .pixel-tour-featured__card:focus .pixel-tour-featured__peek span,
+:root.dark .pixel-tour-featured__card:focus-within .pixel-tour-featured__peek span,
+:root.dark .pixel-tour-featured__card.is-active .pixel-tour-featured__peek span {
+  background: #f8fafc;
+  color: #111827;
+}
+
 @media (min-width: 768px) {
   .pixel-tour-featured__desktop {
     display: grid;
