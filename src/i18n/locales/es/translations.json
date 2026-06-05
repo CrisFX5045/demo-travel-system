@@ -196,5 +196,41 @@
       "applications": "Aplicaciones",
       "sessions": "Sesiones y Contraseña"
     }
+  },
+  "client": {
+    "pixelTour": {
+      "frog": {
+        "aria": "Mostrar promociones de la rana",
+        "promo": "Ultimas promociones!",
+        "croak": "Croak Croak!"
+      },
+      "featured": {
+        "aria": "Tours exclusivos",
+        "tour": "Tour",
+        "exclusive": "Exclusivo",
+        "offer": "Oferta exclusiva",
+        "info": "Informacion",
+        "close": "Cerrar",
+        "closePromotion": "Cerrar promocion",
+        "imageLabel": "Ver imagen {{number}}",
+        "ratingValue": "{{rating}} rating",
+        "facts": {
+          "duration": "Duracion",
+          "from": "Desde",
+          "rating": "Rating",
+          "departure": "Salida"
+        },
+        "slotLabels": {
+          "double": "Ultimo cupo doble",
+          "sunset": "Ultimo atardecer VIP",
+          "private": "Ultimo cupo privado"
+        },
+        "countdown": {
+          "days": "{{days}}d {{hours}}h para liberar cupo",
+          "hours": "{{hours}}h {{minutes}}m para liberar cupo",
+          "minutes": "{{minutes}}m para liberar cupo"
+        }
+      }
+    }
   }
 }

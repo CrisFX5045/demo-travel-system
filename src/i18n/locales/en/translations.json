@@ -196,5 +196,41 @@
       "applications": "Applications",
       "sessions": "Sessions & Password"
     }
+  },
+  "client": {
+    "pixelTour": {
+      "frog": {
+        "aria": "Show frog promotions",
+        "promo": "Last promotions!",
+        "croak": "Croak Croak!"
+      },
+      "featured": {
+        "aria": "Exclusive tours",
+        "tour": "Tour",
+        "exclusive": "Exclusive",
+        "offer": "Exclusive offer",
+        "info": "Information",
+        "close": "Close",
+        "closePromotion": "Close promotion",
+        "imageLabel": "View image {{number}}",
+        "ratingValue": "{{rating}} rating",
+        "facts": {
+          "duration": "Duration",
+          "from": "From",
+          "rating": "Rating",
+          "departure": "Departure"
+        },
+        "slotLabels": {
+          "double": "Last double spot",
+          "sunset": "Last VIP sunset",
+          "private": "Last private spot"
+        },
+        "countdown": {
+          "days": "{{days}}d {{hours}}h to release spot",
+          "hours": "{{hours}}h {{minutes}}m to release spot",
+          "minutes": "{{minutes}}m to release spot"
+        }
+      }
+    }
   }
 }

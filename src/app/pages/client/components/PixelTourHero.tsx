@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { PixelTourFeaturedTours } from "./PixelTourFeaturedTours";
 import "../style/PixelTourHero.css";
 
 const SPRITE_BASE_PATH = "/images/animation/sprites-animation-home";
-const FROG_PROMO_TEXT = "¡Ultimas promociones!";
+const FROG_PROMO_MESSAGE = "promo";
 
 export function PixelTourHero() {
+  const { t } = useTranslation();
   const [frogBubbleKey, setFrogBubbleKey] = useState(0);
-  const [frogBubbleText, setFrogBubbleText] = useState(FROG_PROMO_TEXT);
+  const [frogBubbleMessage, setFrogBubbleMessage] =
+    useState(FROG_PROMO_MESSAGE);
   const frogMessageTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -24,11 +27,11 @@ export function PixelTourHero() {
       window.clearTimeout(frogMessageTimerRef.current);
     }
 
-    setFrogBubbleText("¡Croak Croak!");
+    setFrogBubbleMessage("croak");
     setFrogBubbleKey((current) => current + 1);
 
     frogMessageTimerRef.current = window.setTimeout(() => {
-      setFrogBubbleText(FROG_PROMO_TEXT);
+      setFrogBubbleMessage(FROG_PROMO_MESSAGE);
       setFrogBubbleKey((current) => current + 1);
       frogMessageTimerRef.current = null;
     }, 1800);
@@ -69,14 +72,14 @@ export function PixelTourHero() {
         type="button"
         className="pixel-tour-hero__frog-trigger absolute"
         onClick={handleFrogClick}
-        aria-label="Mostrar promociones de la rana"
+        aria-label={t("client.pixelTour.frog.aria")}
       >
         <span
           key={frogBubbleKey}
           className="pixel-tour-hero__frog-bubble"
           aria-hidden="true"
         >
-          <span>{frogBubbleText}</span>
+          <span>{t(`client.pixelTour.frog.${frogBubbleMessage}`)}</span>
         </span>
       </button>
       <span

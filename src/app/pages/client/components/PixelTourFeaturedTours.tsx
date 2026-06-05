@@ -1,5 +1,7 @@
+import type { TFunction } from "i18next";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 import type { Experience } from "@/app/data/tourism";
@@ -11,26 +13,24 @@ import "../style/PixelTourFeaturedTours.css";
 const FEATURED_TOUR_IDS = ["EXP-1042", "EXP-1188", "EXP-1420"];
 const FEATURED_TOUR_META: Record<
   string,
-  { deadline: string; slotLabel: string; tier: string }
+  { deadline: string; slotLabelKey: "double" | "sunset" | "private" }
 > = {
   "EXP-1042": {
     deadline: "2026-06-08T18:00:00-06:00",
-    slotLabel: "Ultimo cupo doble",
-    tier: "Firma Tailux",
+    slotLabelKey: "double",
   },
   "EXP-1188": {
     deadline: "2026-06-07T16:30:00-06:00",
-    slotLabel: "Ultimo atardecer VIP",
-    tier: "Atardecer VIP",
+    slotLabelKey: "sunset",
   },
   "EXP-1420": {
     deadline: "2026-06-09T12:00:00-06:00",
-    slotLabel: "Ultimo cupo privado",
-    tier: "Acceso oculto",
+    slotLabelKey: "private",
   },
 };
 
 export function PixelTourFeaturedTours() {
+  const { t } = useTranslation();
   const featuredTours = useMemo(
     () =>
       FEATURED_TOUR_IDS.flatMap((id) => {
@@ -128,7 +128,8 @@ export function PixelTourFeaturedTours() {
         return;
       }
 
-      if (activeTourId && 
+      if (
+        activeTourId &&
         mobilePanelRef.current &&
         !mobilePanelRef.current.contains(event.target as Node)
       ) {
@@ -182,7 +183,10 @@ export function PixelTourFeaturedTours() {
   };
 
   return (
-    <div className="pixel-tour-featured" aria-label="Tours exclusivos">
+    <div
+      className="pixel-tour-featured"
+      aria-label={t("client.pixelTour.featured.aria")}
+    >
       <div className="pixel-tour-featured__scrim" aria-hidden="true" />
 
       <div className="pixel-tour-featured__desktop">
@@ -199,7 +203,7 @@ export function PixelTourFeaturedTours() {
             onClick={(event) => openDesktopTour(tour.id, event.currentTarget)}
           >
             <span className="pixel-tour-featured__peek">
-              <span>{getPeekLabel(tour)}</span>
+              <span>{getPeekLabel(tour, t)}</span>
             </span>
           </article>
         ))}
@@ -216,7 +220,7 @@ export function PixelTourFeaturedTours() {
               onMouseEnter={cancelDesktopClose}
               onMouseLeave={scheduleDesktopClose}
             >
-              <TourPromotionPanel tour={activeDesktopTour} now={now} />
+              <TourPromotionPanel tour={activeDesktopTour} now={now} t={t} />
             </div>,
             document.body,
           )
@@ -233,7 +237,7 @@ export function PixelTourFeaturedTours() {
               }
               className={tour.id === activeTour?.id ? "is-active" : undefined}
             >
-              {tour.promotion?.badge ?? "Tour"}
+              {tour.promotion?.badge ?? t("client.pixelTour.featured.tour")}
             </button>
           ))}
         </div>
@@ -249,7 +253,7 @@ export function PixelTourFeaturedTours() {
                   type="button"
                   className="pixel-tour-featured__modal-backdrop"
                   onClick={() => setActiveTourId(null)}
-                  aria-label="Cerrar promocion"
+                  aria-label={t("client.pixelTour.featured.closePromotion")}
                 />
                 <article className="pixel-tour-featured__modal-card">
                   <div className="pixel-tour-featured__modal-gallery">
@@ -275,34 +279,42 @@ export function PixelTourFeaturedTours() {
                       ))}
                     </div>
                     {activeTourImages.length > 1 ? (
-                      <>
-                        <div className="pixel-tour-featured__gallery-dots">
-                          {activeTourImages.map((image, index) => (
-                            <button
-                              key={`${image}-${index}`}
-                              type="button"
-                              className={
-                                index === activeImageIndex ? "is-active" : undefined
-                              }
-                              onClick={() => scrollGalleryTo(index)}
-                              aria-label={`Ver imagen ${index + 1}`}
-                            />
-                          ))}
-                        </div>
-                      </>
+                      <div className="pixel-tour-featured__gallery-dots">
+                        {activeTourImages.map((image, index) => (
+                          <button
+                            key={`${image}-${index}`}
+                            type="button"
+                            className={
+                              index === activeImageIndex ? "is-active" : undefined
+                            }
+                            onClick={() => scrollGalleryTo(index)}
+                            aria-label={t(
+                              "client.pixelTour.featured.imageLabel",
+                              { number: index + 1 },
+                            )}
+                          />
+                        ))}
+                      </div>
                     ) : null}
                   </div>
                   <div className="pixel-tour-featured__modal-body">
                     <div className="pixel-tour-featured__badges">
-                      <span>{activeTour.promotion?.badge ?? "Exclusivo"}</span>
-                      <span>{getTourMeta(activeTour).slotLabel}</span>
+                      <span>
+                        {activeTour.promotion?.badge ??
+                          t("client.pixelTour.featured.exclusive")}
+                      </span>
+                      <span>{getSlotLabel(activeTour, t)}</span>
                     </div>
                     <h3>{activeTour.title}</h3>
                     <p>
                       {activeTour.zone}, {activeTour.province}
                     </p>
                     <span>
-                      {getCountdownLabel(getTourMeta(activeTour).deadline, now)}
+                      {getCountdownLabel(
+                        getTourMeta(activeTour).deadline,
+                        now,
+                        t,
+                      )}
                     </span>
                     {activeTour.promotion?.description ? (
                       <p className="pixel-tour-featured__modal-description">
@@ -311,11 +323,13 @@ export function PixelTourFeaturedTours() {
                     ) : null}
                     <div className="pixel-tour-featured__modal-facts">
                       <div>
-                        <small>Duracion</small>
+                        <small>
+                          {t("client.pixelTour.featured.facts.duration")}
+                        </small>
                         <strong>{activeTour.duration}</strong>
                       </div>
                       <div>
-                        <small>Desde</small>
+                        <small>{t("client.pixelTour.featured.facts.from")}</small>
                         <strong>
                           {formatTourPrice(
                             activeTour.price,
@@ -324,11 +338,13 @@ export function PixelTourFeaturedTours() {
                         </strong>
                       </div>
                       <div>
-                        <small>Rating</small>
+                        <small>{t("client.pixelTour.featured.facts.rating")}</small>
                         <strong>{activeTour.rating}</strong>
                       </div>
                       <div>
-                        <small>Salida</small>
+                        <small>
+                          {t("client.pixelTour.featured.facts.departure")}
+                        </small>
                         <strong>{activeTour.nextSlot}</strong>
                       </div>
                     </div>
@@ -340,13 +356,13 @@ export function PixelTourFeaturedTours() {
                   </div>
                   <div className="pixel-tour-featured__modal-footer">
                     <button type="button" onClick={() => setActiveTourId(null)}>
-                      Cerrar
+                      {t("client.pixelTour.featured.close")}
                     </button>
                     <Link
                       to={getExperiencePath(activeTour.id)}
                       state={{ from: "/client" }}
                     >
-                      Informacion
+                      {t("client.pixelTour.featured.info")}
                     </Link>
                   </div>
                 </article>
@@ -359,7 +375,15 @@ export function PixelTourFeaturedTours() {
   );
 }
 
-function TourPromotionPanel({ tour, now }: { tour: Experience; now: number }) {
+function TourPromotionPanel({
+  tour,
+  now,
+  t,
+}: {
+  tour: Experience;
+  now: number;
+  t: TFunction;
+}) {
   const images = tour.images?.length ? tour.images : [tour.image];
 
   return (
@@ -373,8 +397,11 @@ function TourPromotionPanel({ tour, now }: { tour: Experience; now: number }) {
       </div>
       <div className="pixel-tour-featured__copy pixel-tour-featured__copy--desktop">
         <div className="pixel-tour-featured__badges">
-          <span>{tour.promotion?.badge ?? "Exclusivo"}</span>
-          <span>{getTourMeta(tour).slotLabel}</span>
+          <span>
+            {tour.promotion?.badge ??
+              t("client.pixelTour.featured.exclusive")}
+          </span>
+          <span>{getSlotLabel(tour, t)}</span>
         </div>
         <h3>{tour.title}</h3>
         <p className="pixel-tour-featured__meta">
@@ -387,17 +414,23 @@ function TourPromotionPanel({ tour, now }: { tour: Experience; now: number }) {
         ) : null}
         <div className="pixel-tour-featured__desktop-facts">
           <span>{tour.duration}</span>
-          <span>{tour.rating} rating</span>
+          <span>
+            {t("client.pixelTour.featured.ratingValue", {
+              rating: tour.rating,
+            })}
+          </span>
           <span>{tour.nextSlot}</span>
         </div>
       </div>
       <div className="pixel-tour-featured__footer">
         <div>
           <span>{formatTourPrice(tour.price, tour.priceCurrency)}</span>
-          <small>{getCountdownLabel(getTourMeta(tour).deadline, now)}</small>
+          <small>
+            {getCountdownLabel(getTourMeta(tour).deadline, now, t)}
+          </small>
         </div>
         <Link to={getExperiencePath(tour.id)} state={{ from: "/client" }}>
-          Informacion
+          {t("client.pixelTour.featured.info")}
         </Link>
       </div>
     </article>
@@ -408,12 +441,18 @@ function getTourMeta(tour: Experience) {
   return FEATURED_TOUR_META[tour.id];
 }
 
-function getPeekLabel(tour: Experience) {
+function getSlotLabel(tour: Experience, t: TFunction) {
+  return t(
+    `client.pixelTour.featured.slotLabels.${getTourMeta(tour).slotLabelKey}`,
+  );
+}
+
+function getPeekLabel(tour: Experience, t: TFunction) {
   const badge = tour.promotion?.badge;
   const title = tour.promotion?.title;
 
   if (badge && title) return `${badge} - ${title}`;
-  return badge ?? title ?? "Oferta exclusiva";
+  return badge ?? title ?? t("client.pixelTour.featured.offer");
 }
 
 function formatTourPrice(price: number, currency: "USD" | "CRC") {
@@ -424,14 +463,20 @@ function formatTourPrice(price: number, currency: "USD" | "CRC") {
   }).format(price);
 }
 
-function getCountdownLabel(deadline: string, now: number) {
+function getCountdownLabel(deadline: string, now: number, t: TFunction) {
   const diff = Math.max(0, new Date(deadline).getTime() - now);
   const totalMinutes = Math.floor(diff / 60000);
   const days = Math.floor(totalMinutes / 1440);
   const hours = Math.floor((totalMinutes % 1440) / 60);
   const minutes = totalMinutes % 60;
 
-  if (days > 0) return `${days}d ${hours}h para liberar cupo`;
-  if (hours > 0) return `${hours}h ${minutes}m para liberar cupo`;
-  return `${minutes}m para liberar cupo`;
+  if (days > 0) {
+    return t("client.pixelTour.featured.countdown.days", { days, hours });
+  }
+
+  if (hours > 0) {
+    return t("client.pixelTour.featured.countdown.hours", { hours, minutes });
+  }
+
+  return t("client.pixelTour.featured.countdown.minutes", { minutes });
 }
