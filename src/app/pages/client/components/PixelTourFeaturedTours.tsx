@@ -6,7 +6,7 @@ import type { Experience } from "@/app/data/tourism";
 import { experiences } from "@/app/data/tourism";
 
 import { getExperiencePath } from "../routes";
-import "./PixelTourFeaturedTours.css";
+import "../style/PixelTourFeaturedTours.css";
 
 const FEATURED_TOUR_IDS = ["EXP-1042", "EXP-1188", "EXP-1420"];
 const FEATURED_TOUR_META: Record<
@@ -40,18 +40,60 @@ export function PixelTourFeaturedTours() {
     [],
   );
   const [activeTourId, setActiveTourId] = useState<string | null>(null);
+  const [activeDesktopTourId, setActiveDesktopTourId] = useState<string | null>(
+    null,
+  );
+  const [desktopPopoverPosition, setDesktopPopoverPosition] = useState({
+    left: 0,
+    top: 0,
+  });
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
   const [now, setNow] = useState(() => Date.now());
   const mobilePanelRef = useRef<HTMLDivElement | null>(null);
   const galleryRef = useRef<HTMLDivElement | null>(null);
+  const desktopCloseTimerRef = useRef<number | null>(null);
   const activeTour =
     featuredTours.find((tour) => tour.id === activeTourId) ?? null;
+  const activeDesktopTour =
+    featuredTours.find((tour) => tour.id === activeDesktopTourId) ?? null;
   const activeTourImages = activeTour
     ? activeTour.images?.length
       ? activeTour.images
       : [activeTour.image]
     : [];
+
+  const cancelDesktopClose = () => {
+    if (desktopCloseTimerRef.current === null) return;
+
+    window.clearTimeout(desktopCloseTimerRef.current);
+    desktopCloseTimerRef.current = null;
+  };
+
+  const scheduleDesktopClose = () => {
+    cancelDesktopClose();
+    desktopCloseTimerRef.current = window.setTimeout(() => {
+      setActiveDesktopTourId(null);
+      desktopCloseTimerRef.current = null;
+    }, 180);
+  };
+
+  const openDesktopTour = (
+    tourId: string,
+    element: HTMLElement,
+    mode: "toggle" | "open" = "open",
+  ) => {
+    const rect = element.getBoundingClientRect();
+
+    cancelDesktopClose();
+    setDesktopPopoverPosition({
+      left: rect.left + rect.width / 2,
+      top: rect.bottom + 4,
+    });
+    setActiveDesktopTourId((current) =>
+      mode === "toggle" && current === tourId ? null : tourId,
+    );
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -64,7 +106,15 @@ export function PixelTourFeaturedTours() {
   }, []);
 
   useEffect(() => {
-    if (!activeTourId) return;
+    return () => {
+      if (desktopCloseTimerRef.current === null) return;
+
+      window.clearTimeout(desktopCloseTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!activeTourId && !activeDesktopTourId) return;
 
     const closeWhenOutside = (event: PointerEvent) => {
       if ((event.target as Element).closest(".pixel-tour-featured__modal-card")) {
@@ -72,17 +122,28 @@ export function PixelTourFeaturedTours() {
       }
 
       if (
+        (event.target as Element).closest(".pixel-tour-featured__desktop") ||
+        (event.target as Element).closest(".pixel-tour-featured__desktop-popover")
+      ) {
+        return;
+      }
+
+      if (activeTourId && 
         mobilePanelRef.current &&
         !mobilePanelRef.current.contains(event.target as Node)
       ) {
         setActiveTourId(null);
+      }
+
+      if (activeDesktopTourId) {
+        setActiveDesktopTourId(null);
       }
     };
 
     document.addEventListener("pointerdown", closeWhenOutside);
 
     return () => document.removeEventListener("pointerdown", closeWhenOutside);
-  }, [activeTourId]);
+  }, [activeDesktopTourId, activeTourId]);
 
   useEffect(() => {
     setActiveImageIndex(0);
@@ -126,35 +187,40 @@ export function PixelTourFeaturedTours() {
 
       <div className="pixel-tour-featured__desktop">
         {featuredTours.map((tour) => (
-          <article key={tour.id} className="pixel-tour-featured__card" tabIndex={0}>
+          <article
+            key={tour.id}
+            className="pixel-tour-featured__card"
+            tabIndex={0}
+            onMouseEnter={(event) =>
+              openDesktopTour(tour.id, event.currentTarget)
+            }
+            onMouseLeave={scheduleDesktopClose}
+            onFocus={(event) => openDesktopTour(tour.id, event.currentTarget)}
+            onClick={(event) => openDesktopTour(tour.id, event.currentTarget)}
+          >
             <span className="pixel-tour-featured__peek">
               <span>{getPeekLabel(tour)}</span>
             </span>
-            <div className="pixel-tour-featured__content">
-              <img src={tour.image} alt="" loading="lazy" />
-              <div className="pixel-tour-featured__copy">
-                <div className="pixel-tour-featured__badges">
-                  <span>{tour.promotion?.badge ?? "Exclusivo"}</span>
-                  <span>{getTourMeta(tour).slotLabel}</span>
-                </div>
-                <h3>{tour.title}</h3>
-                <p className="pixel-tour-featured__meta">
-                  {tour.zone}, {tour.province}
-                </p>
-              </div>
-              <div className="pixel-tour-featured__footer">
-                <div>
-                  <span>{formatTourPrice(tour.price, tour.priceCurrency)}</span>
-                  <small>{getCountdownLabel(getTourMeta(tour).deadline, now)}</small>
-                </div>
-                <Link to={getExperiencePath(tour.id)} state={{ from: "/client" }}>
-                  Informacion
-                </Link>
-              </div>
-            </div>
           </article>
         ))}
       </div>
+
+      {isMounted && activeDesktopTour
+        ? createPortal(
+            <div
+              className="pixel-tour-featured__desktop-popover"
+              style={{
+                left: desktopPopoverPosition.left,
+                top: desktopPopoverPosition.top,
+              }}
+              onMouseEnter={cancelDesktopClose}
+              onMouseLeave={scheduleDesktopClose}
+            >
+              <TourPromotionPanel tour={activeDesktopTour} now={now} />
+            </div>,
+            document.body,
+          )
+        : null}
 
       <div className="pixel-tour-featured__mobile" ref={mobilePanelRef}>
         <div className="pixel-tour-featured__chips">
@@ -290,6 +356,51 @@ export function PixelTourFeaturedTours() {
           : null}
       </div>
     </div>
+  );
+}
+
+function TourPromotionPanel({ tour, now }: { tour: Experience; now: number }) {
+  const images = tour.images?.length ? tour.images : [tour.image];
+
+  return (
+    <article className="pixel-tour-featured__content pixel-tour-featured__content--desktop">
+      <div className="pixel-tour-featured__desktop-gallery">
+        <div className="pixel-tour-featured__desktop-gallery-track">
+          {images.slice(0, 4).map((image, index) => (
+            <img key={`${image}-${index}`} src={image} alt="" loading="lazy" />
+          ))}
+        </div>
+      </div>
+      <div className="pixel-tour-featured__copy pixel-tour-featured__copy--desktop">
+        <div className="pixel-tour-featured__badges">
+          <span>{tour.promotion?.badge ?? "Exclusivo"}</span>
+          <span>{getTourMeta(tour).slotLabel}</span>
+        </div>
+        <h3>{tour.title}</h3>
+        <p className="pixel-tour-featured__meta">
+          {tour.zone}, {tour.province}
+        </p>
+        {tour.promotion?.description ? (
+          <p className="pixel-tour-featured__desktop-description">
+            {tour.promotion.description}
+          </p>
+        ) : null}
+        <div className="pixel-tour-featured__desktop-facts">
+          <span>{tour.duration}</span>
+          <span>{tour.rating} rating</span>
+          <span>{tour.nextSlot}</span>
+        </div>
+      </div>
+      <div className="pixel-tour-featured__footer">
+        <div>
+          <span>{formatTourPrice(tour.price, tour.priceCurrency)}</span>
+          <small>{getCountdownLabel(getTourMeta(tour).deadline, now)}</small>
+        </div>
+        <Link to={getExperiencePath(tour.id)} state={{ from: "/client" }}>
+          Informacion
+        </Link>
+      </div>
+    </article>
   );
 }
 
