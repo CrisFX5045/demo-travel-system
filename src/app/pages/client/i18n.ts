@@ -186,6 +186,16 @@ const clientTranslations = {
     authDivider: "o",
     authContinueGoogle: "Continuar con Google",
     authContinueApple: "Continuar con Apple",
+    authCallbackPageTitle: "Google login",
+    authCallbackLoadingTitle: "Conectando",
+    authCallbackErrorTitle: "No se pudo iniciar sesion",
+    authCallbackLoadingMessage:
+      "Estamos validando tu cuenta y preparando tu perfil viajero.",
+    authCallbackMissingTokens:
+      "No recibimos los tokens de Google. Revisa el redirect_to de Supabase.",
+    authCallbackProfileError:
+      "Google inicio sesion, pero no pudimos cargar tu perfil.",
+    authCallbackBackToLogin: "Volver al login",
   },
   en: {
     explore: "Explore",
@@ -347,6 +357,16 @@ const clientTranslations = {
     authDivider: "or",
     authContinueGoogle: "Continue with Google",
     authContinueApple: "Continue with Apple",
+    authCallbackPageTitle: "Google login",
+    authCallbackLoadingTitle: "Connecting",
+    authCallbackErrorTitle: "Could not sign in",
+    authCallbackLoadingMessage:
+      "We are validating your account and preparing your traveler profile.",
+    authCallbackMissingTokens:
+      "We did not receive the Google tokens. Check the Supabase redirect_to setting.",
+    authCallbackProfileError:
+      "Google signed you in, but we could not load your profile.",
+    authCallbackBackToLogin: "Back to login",
   },
 } as const;
 

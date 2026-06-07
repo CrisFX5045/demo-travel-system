@@ -26,6 +26,13 @@ const publicRoutes: RouteObject = {
       }),
     },
     {
+      path: "client/auth/callback",
+      lazy: async () => ({
+        Component: (await import("@/app/pages/client/ClientAuthCallback"))
+          .default,
+      }),
+    },
+    {
       path: "client/feed",
       lazy: async () => ({
         Component: (await import("@/app/pages/client/Feed")).default,

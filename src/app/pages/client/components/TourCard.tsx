@@ -23,7 +23,7 @@ export function TourCard({
 
   return (
     <article className="w-[40vw] md:w-[30vw] max-w-[16rem] shrink-0 md:w-auto md:max-w-none">
-      <div className="relative rounded-[1.15rem] bg-gray-100 transition duration-200 md:rounded-[1.35rem] md:hover:-translate-y-0.5 md:hover:shadow-lg md:hover:shadow-gray-950/10">
+      <div className="relative rounded-[1.15rem] bg-gray-100 transition duration-200 md:rounded-[1.35rem] md:hover:shadow-lg md:hover:shadow-gray-950/10">
         <Link
           to={getExperiencePath(tour.id)}
           state={{ from: "/client" }}

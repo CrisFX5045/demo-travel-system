@@ -63,7 +63,7 @@ const authCopy = {
 export function ClientAuthPage({ mode }: { mode: AuthMode }) {
   const navigate = useNavigate();
   const { language, setLanguage, t } = useClientI18n();
-  const { isDark } = useThemeContext();
+  const { isDark, setThemeMode } = useThemeContext();
   const [acceptedTerms, setAcceptedTerms] = useState(mode === "login");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,6 +91,17 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     navigate("/client");
   };
 
+  const startGoogleAuth = () => {
+    const googleAuthUrl = buildSupabaseGoogleAuthUrl();
+
+    if (!googleAuthUrl) {
+      setAuthError("No esta configurado el inicio de sesion con Google.");
+      return;
+    }
+
+    window.location.assign(googleAuthUrl);
+  };
+
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setAuthError(null);
@@ -107,6 +118,8 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     setIsSubmitting(true);
 
     try {
+      let nextDarkMode: boolean | undefined;
+
       if (isSignup) {
         const fullName = String(formData.get("fullName") ?? "").trim();
         const phone = String(formData.get("phone") ?? "").trim();
@@ -117,7 +130,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
           return;
         }
 
-        await authApi.registerTraveler({
+        const { profile } = await authApi.registerTraveler({
           email,
           password,
           fullName,
@@ -126,8 +139,14 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
           preferredCurrency: currency,
           darkMode: isDark,
         });
+        nextDarkMode = profile.darkMode ?? isDark;
       } else {
-        await authApi.loginWithPassword({ email, password });
+        const { profile } = await authApi.loginWithPassword({ email, password });
+        nextDarkMode = profile.darkMode;
+      }
+
+      if (typeof nextDarkMode === "boolean") {
+        setThemeMode(nextDarkMode ? "dark" : "light");
       }
 
       navigate("/client");
@@ -320,7 +339,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                   type="button"
                   variant="outlined"
                   className="h-11 justify-center gap-2 rounded-full border-gray-200 font-extrabold"
-                  onClick={() => completeDemoAuth("google")}
+                  onClick={startGoogleAuth}
                 >
                   <img
                     src="/images/logos/google.svg"
@@ -452,6 +471,39 @@ function CurrencyDropdown({
 
 function parsePreferredCurrency(value: FormDataEntryValue | string | null): PreferredCurrency {
   return value === "USD" ? "USD" : "CRC";
+}
+
+function buildSupabaseGoogleAuthUrl() {
+  const authBaseUrl = import.meta.env.VITE_SUPABASE_AUTH_BASE_URL;
+  const callbackUrl = getClientAuthCallbackUrl();
+
+  if (!authBaseUrl || !callbackUrl) return null;
+
+  const url = new URL(`${authBaseUrl.replace(/\/$/, "")}/authorize`);
+  url.searchParams.set("provider", "google");
+  url.searchParams.set("redirect_to", callbackUrl);
+
+  return url.toString();
+}
+
+function getClientAuthCallbackUrl() {
+  const envCallbackUrl = import.meta.env.VITE_CLIENT_AUTH_CALLBACK_URL;
+
+  if (typeof envCallbackUrl === "string" && envCallbackUrl.trim()) {
+    return envCallbackUrl;
+  }
+
+  return getDefaultClientAuthCallbackUrl();
+}
+
+function getDefaultClientAuthCallbackUrl() {
+  const basePath = import.meta.env.BASE_URL ?? "/";
+  const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
+
+  return new URL(
+    `${normalizedBasePath.replace(/^\//, "")}client/auth/callback`,
+    window.location.origin,
+  ).toString();
 }
 
 function AuthSubmittingLabel({ label }: { label: string }) {
