@@ -95,7 +95,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     const googleAuthUrl = buildSupabaseGoogleAuthUrl();
 
     if (!googleAuthUrl) {
-      setAuthError("No esta configurado el inicio de sesion con Google.");
+      setAuthError(t("authGoogleNotConfigured"));
       return;
     }
 
@@ -111,7 +111,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
     const password = String(formData.get("password") ?? "");
 
     if (!email || !password) {
-      setAuthError("Ingresa tu correo y contrasena.");
+      setAuthError(t("authEmailPasswordRequired"));
       return;
     }
 
@@ -126,7 +126,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
         const currency = parsePreferredCurrency(formData.get("preferredCurrency"));
 
         if (!fullName) {
-          setAuthError("Ingresa tu nombre completo.");
+          setAuthError(t("authFullNameRequired"));
           return;
         }
 
@@ -151,13 +151,7 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
 
       navigate("/client");
     } catch (error) {
-      setAuthError(
-        error instanceof Error
-          ? error.message
-          : isSignup
-            ? "No se pudo crear la cuenta."
-            : "No se pudo iniciar sesion.",
-      );
+      setAuthError(getAuthErrorMessage(error, isSignup, t));
     } finally {
       setIsSubmitting(false);
     }
@@ -471,6 +465,55 @@ function CurrencyDropdown({
 
 function parsePreferredCurrency(value: FormDataEntryValue | string | null): PreferredCurrency {
   return value === "USD" ? "USD" : "CRC";
+}
+
+function getAuthErrorMessage(
+  error: unknown,
+  isSignup: boolean,
+  t: ReturnType<typeof useClientI18n>["t"],
+) {
+  const apiData =
+    error && typeof error === "object" && "data" in error
+      ? (error as { data?: unknown }).data
+      : null;
+  const apiRecord =
+    apiData && typeof apiData === "object"
+      ? (apiData as Record<string, unknown>)
+      : null;
+  const nestedError =
+    apiRecord?.error && typeof apiRecord.error === "object"
+      ? (apiRecord.error as Record<string, unknown>)
+      : null;
+  const apiCode =
+    getStringValue(apiRecord?.code) ?? getStringValue(nestedError?.code) ?? "";
+
+  if (apiCode === "EMAIL_ALREADY_EXISTS") {
+    return t("authEmailAlreadyExists");
+  }
+
+  const apiMessage =
+    getStringValue(apiRecord?.message) ??
+    getStringValue(apiRecord?.msg) ??
+    getStringValue(nestedError?.message) ??
+    getStringValue(nestedError?.msg);
+
+  if (apiMessage) {
+    return apiMessage;
+  }
+
+  if (error instanceof Error && error.message.trim()) {
+    if (error.message === "A user with this email already exists.") {
+      return t("authEmailAlreadyExists");
+    }
+
+    return error.message;
+  }
+
+  return isSignup ? t("authSignupGenericError") : t("authLoginGenericError");
+}
+
+function getStringValue(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
 function buildSupabaseGoogleAuthUrl() {

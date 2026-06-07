@@ -1,5 +1,8 @@
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 
+import { authApi } from "@/app/api/services";
+import { getClientSession } from "@/app/api/session";
 import { useThemeContext } from "@/app/contexts/theme/context";
 
 import { useClientI18n } from "../i18n";
@@ -7,6 +10,31 @@ import { useClientI18n } from "../i18n";
 export function ClientThemeSwitch() {
   const { isDark, setThemeMode } = useThemeContext();
   const { t } = useClientI18n();
+  const [isSavingTheme, setIsSavingTheme] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+
+  const changeThemeMode = async () => {
+    const nextDarkMode = !isDark;
+    const session = getClientSession();
+
+    setSaveError(false);
+    setThemeMode(nextDarkMode ? "dark" : "light");
+
+    if (session?.status !== "authenticated" || !session.accessToken) {
+      return;
+    }
+
+    setIsSavingTheme(true);
+
+    try {
+      await authApi.updateProfile({ darkMode: nextDarkMode });
+    } catch (error) {
+      setSaveError(true);
+      console.error("No se pudo guardar el modo de tema.", error);
+    } finally {
+      setIsSavingTheme(false);
+    }
+  };
 
   return (
     <div className="rounded-3xl bg-gray-100 p-3 dark:bg-dark-700/70">
@@ -28,10 +56,12 @@ export function ClientThemeSwitch() {
         </div>
         <button
           type="button"
-          onClick={() => setThemeMode(isDark ? "light" : "dark")}
+          onClick={() => {
+            void changeThemeMode();
+          }}
           className={`relative h-7 w-12 shrink-0 cursor-pointer rounded-full transition ${
             isDark ? "bg-gray-950 dark:bg-primary-500" : "bg-gray-300"
-          }`}
+          } ${isSavingTheme ? "opacity-80" : ""}`}
           aria-pressed={isDark}
           aria-label={t("themeMode")}
         >
@@ -42,6 +72,11 @@ export function ClientThemeSwitch() {
           />
         </button>
       </div>
+      {saveError ? (
+        <p className="mt-3 rounded-2xl bg-red-50 px-3 py-2 text-xs font-extrabold text-red-600 dark:bg-red-500/10 dark:text-red-300">
+          {t("themeModeSaveError")}
+        </p>
+      ) : null}
     </div>
   );
 }

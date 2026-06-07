@@ -123,8 +123,15 @@ async function readResponse<T>(response: Response): Promise<T> {
 function getApiErrorMessage(data: unknown) {
   if (data && typeof data === "object") {
     const record = data as Record<string, unknown>;
+    const nestedError =
+      record.error && typeof record.error === "object"
+        ? (record.error as Record<string, unknown>)
+        : null;
+
     if (typeof record.message === "string") return record.message;
     if (typeof record.msg === "string") return record.msg;
+    if (typeof nestedError?.message === "string") return nestedError.message;
+    if (typeof nestedError?.msg === "string") return nestedError.msg;
     if (typeof record.error_description === "string") return record.error_description;
     if (typeof record.error === "string") return record.error;
     if (typeof record.title === "string") return record.title;
