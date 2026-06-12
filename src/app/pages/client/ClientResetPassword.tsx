@@ -1,7 +1,6 @@
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
-  KeyIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
 import { FormEvent, useEffect, useMemo, useState } from "react";
