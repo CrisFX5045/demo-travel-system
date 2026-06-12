@@ -31,6 +31,18 @@ function pickOptionalNumber(record: Record<string, unknown>, keys: string[]) {
   return undefined;
 }
 
+function pickOptionalCount(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = record[key];
+    if (Array.isArray(value)) return value.length;
+    if (typeof value === "number") return value;
+    if (typeof value === "string" && value.trim() && !Number.isNaN(Number(value))) {
+      return Number(value);
+    }
+  }
+  return undefined;
+}
+
 function pickArray(record: Record<string, unknown>, keys: string[]) {
   for (const key of keys) {
     const value = record[key];
@@ -98,6 +110,11 @@ export function normalizeTravelerProfile(value: unknown): TravelerProfile {
   const profile = ((record.profile && typeof record.profile === "object"
     ? record.profile
     : record) ?? {}) as Record<string, unknown>;
+  const stats = ((record.stats && typeof record.stats === "object"
+    ? record.stats
+    : profile.stats && typeof profile.stats === "object"
+      ? profile.stats
+      : {}) ?? {}) as Record<string, unknown>;
 
   return {
     id: pickString(profile, ["id", "userId"], pickString(record, ["userId", "id"])),
@@ -114,6 +131,12 @@ export function normalizeTravelerProfile(value: unknown): TravelerProfile {
         ? profile.isIdentityVerified
         : undefined,
     profileCompletion: pickOptionalNumber(profile, ["profileCompletion", "completion"]),
+    stats: {
+      completedExperiences: pickOptionalNumber(stats, ["completedExperiences"]),
+      favoriteExperiences: pickOptionalCount(stats, ["favoriteExperiences"]),
+      pendingBookings: pickOptionalNumber(stats, ["pendingBookings"]),
+      totalReviews: pickOptionalNumber(stats, ["totalReviews"]),
+    },
     memberSince: pickString(profile, ["memberSince", "createdAt"]),
     createdAt: pickString(profile, ["createdAt"], pickString(record, ["createdAt"])),
     updatedAt: pickString(profile, ["updatedAt"], pickString(record, ["updatedAt"])),

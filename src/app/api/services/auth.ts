@@ -155,9 +155,17 @@ export const authApi = {
   },
 
   async logoutClient() {
-    // TODO: call authEndpoints.logout() when the backend logout endpoint is ready.
-    clearClientSession();
-    clearApiResourceCache();
+    try {
+      await apiRequest<unknown>(authEndpoints.logout(), {
+        method: "POST",
+        retryOnUnauthorized: false,
+      });
+    } catch (error) {
+      console.error("No se pudo cerrar la sesion en el servidor.", error);
+    } finally {
+      clearClientSession();
+      clearApiResourceCache();
+    }
   },
 };
 

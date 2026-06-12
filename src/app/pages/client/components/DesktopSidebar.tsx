@@ -31,6 +31,7 @@ export function DesktopSidebar({
 }) {
   const [isProvinceOpen, setIsProvinceOpen] = useState(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const provincePickerRef = useRef<HTMLDivElement | null>(null);
   const languagePickerRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -55,9 +56,15 @@ export function DesktopSidebar({
   };
 
   const logoutClient = async () => {
-    await authApi.logoutClient();
-    onClose();
-    navigate("/client");
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      await authApi.logoutClient();
+      navigate("/client");
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   useEffect(() => {
@@ -204,13 +211,20 @@ export function DesktopSidebar({
           <div className="mt-3 border-t border-gray-100 pt-3">
             <button
               type="button"
+              disabled={isLoggingOut}
               onClick={() => {
                 void logoutClient();
               }}
-              className="flex w-full cursor-pointer items-center gap-4 rounded-2xl px-4 py-3 text-base font-extrabold text-red-600 transition hover:bg-red-50"
+              className={`flex w-full cursor-pointer items-center gap-4 rounded-2xl px-4 py-3 text-base font-extrabold text-red-600 transition hover:bg-red-50 ${
+                isLoggingOut ? "cursor-wait opacity-75" : ""
+              }`}
             >
               <ArrowRightOnRectangleIcon className="size-6" />
-              Cerrar sesion
+              {isLoggingOut ? (
+                <LogoutLoadingLabel label="Cerrando sesion" />
+              ) : (
+                "Cerrar sesion"
+              )}
             </button>
           </div>
         )}
@@ -314,5 +328,18 @@ export function DesktopSidebar({
         </div>
       </aside>
     </div>
+  );
+}
+
+function LogoutLoadingLabel({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span>{label}</span>
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        <span className="size-1.5 animate-bounce rounded-full bg-current [animation-delay:-240ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-current [animation-delay:-120ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-current" />
+      </span>
+    </span>
   );
 }

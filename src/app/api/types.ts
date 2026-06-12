@@ -12,6 +12,12 @@ export type TravelerProfile = {
   darkMode?: boolean;
   isIdentityVerified?: boolean;
   profileCompletion?: number;
+  stats?: {
+    completedExperiences?: number;
+    favoriteExperiences?: number;
+    pendingBookings?: number;
+    totalReviews?: number;
+  };
   memberSince?: string;
   createdAt?: string;
   updatedAt?: string;

@@ -1,5 +1,5 @@
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { useApiResource } from "@/app/api/hooks";
@@ -35,6 +35,7 @@ export default function ClientProfile() {
   const navigate = useNavigate();
   const { isMobileHeaderVisible } = useScrollChrome();
   const { language, t } = useClientI18n();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const copy = profileCopy[language];
   const isAuthenticated = useMemo(() => hasClientAccessToken(), []);
   const clientSession = useMemo(() => getClientSession(), []);
@@ -89,8 +90,15 @@ export default function ClientProfile() {
   }, [isAuthenticated, navigate]);
 
   const logoutClient = async () => {
-    await authApi.logoutClient();
-    navigate("/client", { replace: true });
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      await authApi.logoutClient();
+      navigate("/client", { replace: true });
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   if (!isAuthenticated) return null;
@@ -123,9 +131,11 @@ export default function ClientProfile() {
           <ProfileStats
             copy={copy}
             stats={{
-              trips: upcomingTrips.length + pastTrips.length,
+              trips: profile?.stats?.completedExperiences,
+              favorites: profile?.stats?.favoriteExperiences,
+              reviews: profile?.stats?.totalReviews,
             }}
-            isLoading={isUpcomingLoading || isPastLoading}
+            isLoading={isProfileLoading}
           />
 
           <ProfileSection
@@ -213,12 +223,22 @@ export default function ClientProfile() {
 
           <button
             type="button"
+            disabled={isLoggingOut}
             onClick={() => {
               void logoutClient();
             }}
-            className="flex items-center justify-center gap-2 rounded-3xl border border-red-100 bg-white px-5 py-4 text-sm font-extrabold text-red-600 shadow-sm shadow-red-100/60 transition hover:bg-red-50 active:scale-[0.98]"
+            className={`flex items-center justify-center gap-2 rounded-3xl border border-red-100 bg-white px-5 py-4 text-sm font-extrabold text-red-600 shadow-sm shadow-red-100/60 transition hover:bg-red-50 active:scale-[0.98] ${
+              isLoggingOut ? "cursor-wait opacity-75 [color:transparent]" : ""
+            }`}
           >
-            <ArrowRightOnRectangleIcon className="size-5" />
+            <ArrowRightOnRectangleIcon
+              className={`size-5 ${isLoggingOut ? "text-red-600" : ""}`}
+            />
+            {isLoggingOut ? (
+              <LogoutLoadingLabel
+                label={language === "es" ? "Cerrando sesion" : "Signing out"}
+              />
+            ) : null}
             {language === "es" ? "Cerrar sesión" : "Log out"}
           </button>
         </aside>
@@ -247,6 +267,19 @@ export default function ClientProfile() {
         `}
       </style>
     </main>
+  );
+}
+
+function LogoutLoadingLabel({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 text-red-600">
+      <span>{label}</span>
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        <span className="size-1.5 animate-bounce rounded-full bg-current [animation-delay:-240ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-current [animation-delay:-120ms]" />
+        <span className="size-1.5 animate-bounce rounded-full bg-current" />
+      </span>
+    </span>
   );
 }
 
