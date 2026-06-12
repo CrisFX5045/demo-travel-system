@@ -222,12 +222,6 @@ export default function ClientForgotPassword() {
 }
 
 function getDefaultPasswordResetUrl() {
-  const envResetUrl = import.meta.env.VITE_CLIENT_PASSWORD_RESET_URL;
-
-  if (typeof envResetUrl === "string" && envResetUrl.trim()) {
-    return envResetUrl;
-  }
-
   const basePath = import.meta.env.BASE_URL ?? "/";
   const normalizedBasePath = basePath.endsWith("/") ? basePath : `${basePath}/`;
 

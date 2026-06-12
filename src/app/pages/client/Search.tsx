@@ -463,7 +463,7 @@ export default function ClientSearch() {
           >
             <ArrowLeftIcon className="size-5" />
           </button>
-          <div className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full border border-gray-100 bg-white px-4 shadow-sm shadow-gray-200/70">
+          <div className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full border border-gray-100 bg-white px-4 shadow-sm shadow-gray-200/70 dark:border-black dark:shadow-black/50">
             <MagnifyingGlassIcon className="size-5 shrink-0 text-gray-500" />
             <input
               ref={inputRef}
@@ -513,7 +513,7 @@ export default function ClientSearch() {
                       true,
                     )
                   }
-                  className="shrink-0 rounded-full bg-white/80 px-2.5 py-1 text-[0.72rem] font-extrabold text-gray-600 ring-1 ring-gray-100 transition active:scale-[0.98]"
+                  className="shrink-0 rounded-full bg-white/80 px-2.5 py-1 text-[0.72rem] font-extrabold text-gray-600 ring-1 ring-gray-100 transition active:scale-[0.98] dark:ring-black"
                 >
                   {item}
                 </button>
@@ -755,7 +755,7 @@ export default function ClientSearch() {
                                 setInlineEndDate(nextStartDate);
                               }
                             }}
-                            className="h-11 min-w-0 rounded-2xl bg-white px-3 text-sm font-extrabold text-gray-950 outline-none ring-1 ring-gray-100"
+                            className="h-11 min-w-0 rounded-2xl bg-white px-3 text-sm font-extrabold text-gray-950 outline-none ring-1 ring-gray-100 dark:ring-black"
                           />
                         </label>
                         <label className="grid gap-1 text-xs font-bold text-gray-500">
@@ -767,7 +767,7 @@ export default function ClientSearch() {
                             onChange={(event) =>
                               setInlineEndDate(event.target.value)
                             }
-                            className="h-11 min-w-0 rounded-2xl bg-white px-3 text-sm font-extrabold text-gray-950 outline-none ring-1 ring-gray-100"
+                            className="h-11 min-w-0 rounded-2xl bg-white px-3 text-sm font-extrabold text-gray-950 outline-none ring-1 ring-gray-100 dark:ring-black"
                           />
                         </label>
                       </div>
