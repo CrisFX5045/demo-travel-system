@@ -109,9 +109,7 @@ export default function ClientForgotPassword() {
 
               {emailSentTo ? (
                 <div className="grid gap-5 text-center">
-                  <span className="mx-auto grid size-16 place-items-center rounded-full bg-green-50 text-green-700">
-                    <CheckCircleIcon className="size-9" />
-                  </span>
+
                   <div>
                     <h1 className="text-[2rem] font-extrabold leading-tight text-gray-950">
                       {t("authForgotSuccessTitle")}
@@ -119,6 +117,9 @@ export default function ClientForgotPassword() {
                     <p className="mt-2 text-sm leading-6 text-gray-500">
                       {t("authForgotSuccessMessage")}
                     </p>
+                    <span className="mx-auto grid size-16 place-items-center rounded-full bg-green-50 text-green-700">
+                    <CheckCircleIcon className="size-9" />
+                    </span>
                     <p className="mt-3 rounded-2xl bg-gray-50 px-4 py-3 text-sm font-extrabold text-gray-700">
                       {emailSentTo}
                     </p>
