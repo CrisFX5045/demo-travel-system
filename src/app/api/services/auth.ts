@@ -25,6 +25,18 @@ export type TravelerSignupPayload = {
   darkMode?: boolean;
 };
 
+export type ForgotPasswordPayload = {
+  email: string;
+  redirectTo: string;
+};
+
+type ForgotPasswordResponse = {
+  data?: {
+    email?: string;
+  };
+  message?: string;
+};
+
 export type SupabasePasswordTokenResponse = {
   access_token: string;
   refresh_token: string;
@@ -152,6 +164,14 @@ export const authApi = {
     });
 
     return { session: data, profile };
+  },
+
+  async forgotPassword(payload: ForgotPasswordPayload) {
+    return apiRequest<ForgotPasswordResponse>(authEndpoints.forgotPassword(), {
+      method: "POST",
+      auth: false,
+      body: JSON.stringify(payload),
+    });
   },
 
   async logoutClient() {

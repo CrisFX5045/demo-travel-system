@@ -294,9 +294,12 @@ export function ClientAuthPage({ mode }: { mode: AuthMode }) {
                     classNames={{ labelText: "font-bold text-gray-600" }}
                   />
                   {!isSignup && (
-                    <a href="#reset" className="font-bold text-green-700">
+                    <Link
+                      to="/client/forgot-password"
+                      className="font-bold text-green-700"
+                    >
                       {t("authForgotPassword")}
-                    </a>
+                    </Link>
                   )}
                 </div>
 

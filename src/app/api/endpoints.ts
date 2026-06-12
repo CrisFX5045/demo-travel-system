@@ -69,6 +69,11 @@ export const authEndpoints = {
   updateProfile: () => joinUrl(apiBaseUrl, "/Me/Profile"),
   registerTraveler: () =>
     joinUrl(apiBaseUrl, envOrFallback("VITE_API_CLIENT_SIGNUP", missingEnvPath("VITE_API_CLIENT_SIGNUP"))),
+  forgotPassword: () =>
+    joinUrl(
+      apiBaseUrl,
+      envOrFallback("VITE_API_CLIENT_FORGOT_PASSWORD", missingEnvPath("VITE_API_CLIENT_FORGOT_PASSWORD")),
+    ),
   logout: () => joinUrl(apiBaseUrl, envOrFallback("VITE_API_CLIENT_LOGOUT", missingEnvPath("VITE_API_CLIENT_LOGOUT"))),
 };
 

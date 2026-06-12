@@ -26,6 +26,13 @@ const publicRoutes: RouteObject = {
       }),
     },
     {
+      path: "client/forgot-password",
+      lazy: async () => ({
+        Component: (await import("@/app/pages/client/ClientForgotPassword"))
+          .default,
+      }),
+    },
+    {
       path: "client/auth/callback",
       lazy: async () => ({
         Component: (await import("@/app/pages/client/ClientAuthCallback"))
