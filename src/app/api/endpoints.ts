@@ -74,6 +74,11 @@ export const authEndpoints = {
       apiBaseUrl,
       envOrFallback("VITE_API_CLIENT_FORGOT_PASSWORD", missingEnvPath("VITE_API_CLIENT_FORGOT_PASSWORD")),
     ),
+  resetPassword: () =>
+    joinUrl(
+      apiBaseUrl,
+      envOrFallback("VITE_API_CLIENT_RESET_PASSWORD", missingEnvPath("VITE_API_CLIENT_RESET_PASSWORD")),
+    ),
   logout: () => joinUrl(apiBaseUrl, envOrFallback("VITE_API_CLIENT_LOGOUT", missingEnvPath("VITE_API_CLIENT_LOGOUT"))),
 };
 

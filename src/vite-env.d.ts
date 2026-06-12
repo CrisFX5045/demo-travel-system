@@ -15,6 +15,7 @@ interface ImportMetaEnv {
   readonly VITE_API_CLIENT_PROFILE?: string;
   readonly VITE_API_CLIENT_SIGNUP?: string;
   readonly VITE_API_CLIENT_FORGOT_PASSWORD?: string;
+  readonly VITE_API_CLIENT_RESET_PASSWORD?: string;
   readonly VITE_API_CLIENT_SOCIAL_LOGIN?: string;
 }
 

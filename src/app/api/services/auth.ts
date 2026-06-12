@@ -30,6 +30,12 @@ export type ForgotPasswordPayload = {
   redirectTo: string;
 };
 
+export type ResetPasswordPayload = {
+  email: string;
+  token: string;
+  newPassword: string;
+};
+
 type ForgotPasswordResponse = {
   data?: {
     email?: string;
@@ -168,6 +174,14 @@ export const authApi = {
 
   async forgotPassword(payload: ForgotPasswordPayload) {
     return apiRequest<ForgotPasswordResponse>(authEndpoints.forgotPassword(), {
+      method: "POST",
+      auth: false,
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async resetPassword(payload: ResetPasswordPayload) {
+    return apiRequest<unknown>(authEndpoints.resetPassword(), {
       method: "POST",
       auth: false,
       body: JSON.stringify(payload),
